@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cornerstone Admin</title>
-<meta name="robots" content="noindex">
-<meta name="theme-color" content="#E4010D">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#141213">
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
@@ -15,29 +15,36 @@
   --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--body:"Source Sans 3","Segoe UI",system-ui,sans-serif}
 @media (prefers-color-scheme:dark){:root{--red:#F2222D;--ink:#F3EFEF;--bg:#121011;--surface:#1D1A1B;--muted:#A69EA0;--line:#322D2E;--chip:#3A1416;--chip-ink:#FF8C92;--ok:#5BC98A;color-scheme:dark}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+#panel{display:grid;gap:24px}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
-.top{background:var(--red);color:#fff;padding-top:env(safe-area-inset-top,0px)}
-.top-in,main{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.top-in{padding-block:14px;display:flex;align-items:center;gap:12px}
-.top b{font-family:var(--display);font-size:1.4rem;letter-spacing:.03em;text-transform:uppercase;flex:1}
-.top a,.top button{color:#fff;background:rgba(0,0,0,.2);border:0;border-radius:999px;padding:6px 12px;font:inherit;font-weight:600;font-size:.85rem;text-decoration:none;cursor:pointer}
-main{padding-block:20px 60px;display:grid;gap:22px}
+.top{background:#141213;color:#fff;padding-top:env(safe-area-inset-top,0px);border-bottom:3px solid #E4010D}
+.top-in,main{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{padding-block:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top img{height:44px;width:auto}
+.top .sp{flex:1}
+.top .lbl{font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;font-size:.95rem;opacity:.85}
+.top button{color:#fff;background:rgba(255,255,255,.12);border:0;border-radius:999px;padding:6px 12px;font:inherit;font-weight:600;font-size:.85rem;cursor:pointer}
+main{padding-block:22px 60px;display:grid;gap:24px}
 h1{font-family:var(--display);font-size:1.9rem;text-transform:uppercase;margin:0;line-height:1.05}
 h2{font-family:var(--display);font-size:1.05rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px}
 label{display:grid;gap:4px;font-weight:600;font-size:.9rem}
-input,textarea,select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
-textarea{min-height:80px;resize:vertical}
+label small{font-weight:400;color:var(--muted)}
+input,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:90px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:480px){.two{grid-template-columns:1fr}}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
 .check{display:flex;gap:8px;align-items:center;font-weight:600}
 .check input{width:auto}
 .btn{background:var(--red);color:#fff;border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;justify-self:start}
-.btn:disabled{opacity:.6}
-.link{background:none;border:0;color:var(--red);font:inherit;font-weight:700;cursor:pointer;padding:4px 0}
-.tabs{display:flex;gap:8px}
-.tabs button{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit;font-weight:700;cursor:pointer}
-.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--red);border:1.5px solid var(--red)}
+.btn:disabled{opacity:.6;cursor:default}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-family:var(--display);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.82rem;color:var(--muted)}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}}
 .list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .row{display:flex;gap:12px;padding:12px 14px;border-top:1px solid var(--line);align-items:flex-start}
 .row:first-child{border-top:0}
@@ -45,23 +52,28 @@ textarea{min-height:80px;resize:vertical}
 .row b{display:block}
 .row small{color:var(--muted)}
 .row p{margin:2px 0 0;color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}
-.del{border:1px solid var(--line);background:var(--bg);color:var(--chip-ink);border-radius:8px;padding:5px 10px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+.pill{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--chip-ink);margin-left:6px;vertical-align:middle}
+.del{border:1px solid var(--line);background:var(--bg);color:var(--chip-ink);border-radius:8px;padding:5px 10px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;flex:none}
 .del.confirm{background:var(--red);color:#fff;border-color:var(--red)}
 .msg{border-radius:10px;padding:10px 12px;font-weight:600;font-size:.92rem;background:var(--chip);color:var(--chip-ink)}
 .msg.ok{background:transparent;border:1.5px solid var(--ok);color:var(--ok)}
 .muted{color:var(--muted)}
+.preview{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;background:var(--bg)}
+.preview img{width:36px;height:36px;border-radius:8px}
+.preview b{display:block;font-size:.95rem}
+.preview span{font-size:.88rem;color:var(--muted)}
 :focus-visible{outline:3px solid var(--red);outline-offset:2px}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-in"><b>Cornerstone Admin</b><a href="/">Back to app</a><button id="signout" hidden>Sign out</button></div></header>
+<header class="top"><div class="top-in"><img src="/icons/logo-horizontal.webp" alt="Cornerstone Christian School"><span class="sp"></span><span class="lbl">Admin</span><button id="signout" hidden>Sign out</button></div></header>
 <main>
 
 <section id="login" class="card" hidden>
-  <h1>Staff sign-in</h1>
-  <p class="muted">Sign in to post announcements and calendar events to the Cornerstone app.</p>
-  <form id="login-form" class="card" style="border:0;padding:0">
-    <label for="li-email">School email<input id="li-email" type="email" autocomplete="username" required></label>
+  <h1>School admin sign-in</h1>
+  <p class="muted">Sign in to send notifications and post announcements to the Cornerstone app.</p>
+  <form id="login-form" style="display:grid;gap:12px">
+    <label for="li-email">Email<input id="li-email" type="email" autocomplete="username" required></label>
     <label for="li-pass">Password<input id="li-pass" type="password" autocomplete="current-password" required></label>
     <button class="btn" id="li-btn">Sign in</button>
   </form>
@@ -69,46 +81,60 @@ textarea{min-height:80px;resize:vertical}
 </section>
 
 <section id="noaccess" class="card" hidden>
-  <h1>No posting access</h1>
-  <p>You're signed in as <b id="na-email"></b>, but this account isn't on the posting list. Ask the school office to add you.</p>
+  <h1>No admin access</h1>
+  <p>You're signed in as <b id="na-email"></b>, but this account isn't a school admin.</p>
 </section>
 
 <section id="panel" hidden>
-  <div style="display:grid;gap:22px">
-    <div><h1>Post an update</h1><p class="muted" id="who"></p></div>
-    <div class="tabs" role="group" aria-label="What to post">
-      <button id="t-ann" aria-pressed="true" data-t="ann">Announcement</button>
-      <button id="t-ev" aria-pressed="false" data-t="ev">Calendar event</button>
-    </div>
+  <div><h1>App admin</h1><p class="muted" id="who"></p></div>
 
+  <div class="stats">
+    <div class="stat"><b id="st-devices">–</b><span>Devices with notifications on</span></div>
+    <div class="stat"><b id="st-sent">–</b><span>Notifications sent</span></div>
+    <div class="stat"><b id="st-sync">–</b><span id="st-sync-l">Last website update</span></div>
+  </div>
+
+  <div>
+    <h2>Send a push notification</h2>
+    <form id="push-form" class="card">
+      <label for="p-title">Title <small>(up to 80 characters)</small><input id="p-title" required maxlength="80" placeholder="Early dismissal today"></label>
+      <label for="p-body">Message <small>(up to 300 characters)</small><textarea id="p-body" maxlength="300" placeholder="Due to weather, all students will be dismissed at 12:30 PM."></textarea></label>
+      <label for="p-url">Link when tapped <small>(optional)</small><input id="p-url" type="url" placeholder="https://www.csjax.org/..."></label>
+      <label class="check" for="p-ann"><input id="p-ann" type="checkbox" checked> Also post it as an announcement in the app</label>
+      <div class="preview" aria-label="Preview"><img src="/icons/icon-192.png" alt=""><div><b id="pv-t">Early dismissal today</b><span id="pv-b">Due to weather, all students will be dismissed at 12:30 PM.</span></div></div>
+      <div id="confirm-row" hidden class="msg">This goes to <b id="cf-n">0</b> devices right away. Tap <b>Send now</b> again to confirm.</div>
+      <button class="btn" id="p-btn">Send now</button>
+    </form>
+    <div id="p-msg" class="msg" hidden style="margin-top:10px"></div>
+  </div>
+
+  <div><h2>Sent notifications</h2><div class="list" id="note-list"></div></div>
+
+  <div>
+    <h2>Post an announcement</h2>
     <form id="ann-form" class="card">
       <label for="a-title">Title<input id="a-title" required maxlength="120" placeholder="Picture Day is Tuesday"></label>
       <label for="a-body">Details<textarea id="a-body" maxlength="600" placeholder="Students should wear their dress uniform."></textarea></label>
-      <label for="a-link">Link (optional)<input id="a-link" type="url" placeholder="https://www.csjax.org/..."></label>
       <div class="two">
-        <label for="a-aud">Who sees it<select id="a-aud"><option value="all">Everyone</option><option value="parent">Parents only</option><option value="staff">Staff only</option></select></label>
-        <label for="a-exp">Remove after (optional)<input id="a-exp" type="date"></label>
+        <label for="a-link">Link <small>(optional)</small><input id="a-link" type="url" placeholder="https://www.csjax.org/..."></label>
+        <label for="a-exp">Remove after <small>(optional)</small><input id="a-exp" type="date"></label>
       </div>
       <label class="check" for="a-pin"><input id="a-pin" type="checkbox"> Pin to the top</label>
       <button class="btn">Post announcement</button>
     </form>
+    <div id="a-msg" class="msg" hidden style="margin-top:10px"></div>
+  </div>
 
-    <form id="ev-form" class="card" hidden>
-      <label for="e-title">Event<input id="e-title" required maxlength="120" placeholder="Fall Festival"></label>
-      <div class="two">
-        <label for="e-date">Date<input id="e-date" type="date" required></label>
-        <label for="e-time">Time (optional)<input id="e-time" maxlength="40" placeholder="6:00 – 8:00 PM"></label>
-      </div>
-      <div class="two">
-        <label for="e-grades">Grades<input id="e-grades" maxlength="60" placeholder="All grades"></label>
-        <label for="e-aud">Who sees it<select id="e-aud"><option value="all">Everyone</option><option value="parent">Parents only</option><option value="staff">Staff only</option></select></label>
-      </div>
-      <button class="btn">Add event</button>
-    </form>
-    <div id="p-msg" class="msg" hidden></div>
+  <div><h2>Announcements in the app</h2><div class="list" id="ann-list"></div>
+    <p class="muted" style="margin-top:8px;font-size:.9rem">Announcements marked <b>csjax.org</b> are copied from the website every day at 5:00 PM. Edit those on the website.</p></div>
 
-    <div><h2>Announcements</h2><div class="list" id="ann-list"></div></div>
-    <div><h2>Upcoming events</h2><div class="list" id="ev-list"></div></div>
+  <div>
+    <h2>Website &amp; calendar updates</h2>
+    <div class="card">
+      <p>The app copies announcements, field trip permission slips, documents and the Google Calendar from csjax.org automatically every day at <b>5:00 PM</b>.</p>
+      <p class="muted" id="sync-detail"></p>
+      <button class="btn ghost" id="sync-btn">Update from website now</button>
+    </div>
   </div>
 </section>
 </main>
@@ -117,65 +143,92 @@ textarea{min-height:80px;resize:vertical}
 const sb=supabase.createClient('https://cvvdwhgdiqnoqgxtgzfw.supabase.co','sb_publishable_hnUHrqYS2un679djbzsXxg_oLYDQDp0');
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const AUD={all:'Everyone',parent:'Parents',staff:'Staff'};
+const when=t=>new Date(t).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 function show(id){['login','noaccess','panel'].forEach(x=>$('#'+x).hidden=x!==id);$('#signout').hidden=id==='login'}
-function flash(el,text,ok){el.textContent=text;el.className='msg'+(ok?' ok':'');el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>el.hidden=true,4000)}
-const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+function flash(el,text,ok){el.textContent=text;el.className='msg'+(ok?' ok':'');el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>el.hidden=true,6000)}
+let DEVICES=0;
 
 async function route(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){show('login');return}
   const {data:isAdmin}=await sb.rpc('is_admin');
   if(!isAdmin){$('#na-email').textContent=session.user.email;show('noaccess');return}
-  $('#who').textContent='Signed in as '+session.user.email+'. Posts appear in the app right away.';
-  show('panel');loadLists();
+  $('#who').textContent='Signed in as '+session.user.email;
+  show('panel');loadAll();
 }
-
 $('#login-form').addEventListener('submit',async e=>{
   e.preventDefault();$('#li-btn').disabled=true;
   const {error}=await sb.auth.signInWithPassword({email:$('#li-email').value.trim().toLowerCase(),password:$('#li-pass').value});
   $('#li-btn').disabled=false;
-  if(error){flash($('#li-msg'),'That email and password didn\'t match. Check them and try again, or ask the office to reset your password.');return}
+  if(error){flash($('#li-msg'),'That email and password didn\'t match. Check both and try again.');return}
   route();
 });
 $('#signout').addEventListener('click',async()=>{await sb.auth.signOut();show('login')});
 
-document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x===b));
-  $('#ann-form').hidden=b.dataset.t!=='ann';$('#ev-form').hidden=b.dataset.t!=='ev';
-}));
+// live preview
+['p-title','p-body'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#pv-t').textContent=$('#p-title').value||'Early dismissal today';$('#pv-b').textContent=$('#p-body').value||'Your message';$('#confirm-row').hidden=true}));
+
+let armed=false;
+$('#push-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!armed){armed=true;$('#cf-n').textContent=DEVICES;$('#confirm-row').hidden=false;setTimeout(()=>{armed=false;$('#confirm-row').hidden=true},8000);return}
+  armed=false;$('#confirm-row').hidden=true;
+  const btn=$('#p-btn');btn.disabled=true;btn.textContent='Sending…';
+  const payload={title:$('#p-title').value.trim(),body:$('#p-body').value.trim(),url:$('#p-url').value.trim()||null};
+  const {data,error}=await sb.functions.invoke('send-push',{body:payload});
+  btn.disabled=false;btn.textContent='Send now';
+  if(error||!data?.ok){flash($('#p-msg'),'Not sent: '+(data?.error||error?.message||'unknown error'));return}
+  if($('#p-ann').checked){await sb.from('announcements').insert({title:payload.title,body:payload.body,link:payload.url,source:'admin',expires_on:new Date(Date.now()+7*864e5).toISOString().slice(0,10)})}
+  flash($('#p-msg'),`Sent to ${data.sent} device${data.sent===1?'':'s'}`+(data.failed?` (${data.failed} couldn't be reached${data.removed?', '+data.removed+' removed':''})`:'')+'.',true);
+  e.target.reset();$('#p-ann').checked=true;loadAll();
+});
 
 $('#ann-form').addEventListener('submit',async e=>{
   e.preventDefault();
-  const row={title:$('#a-title').value.trim(),body:$('#a-body').value.trim(),link:$('#a-link').value.trim()||null,audience:$('#a-aud').value,pinned:$('#a-pin').checked,expires_on:$('#a-exp').value||null};
+  const row={title:$('#a-title').value.trim(),body:$('#a-body').value.trim(),link:$('#a-link').value.trim()||null,pinned:$('#a-pin').checked,expires_on:$('#a-exp').value||null,source:'admin'};
   const {error}=await sb.from('announcements').insert(row);
-  if(error){flash($('#p-msg'),'Not posted: '+error.message);return}
-  e.target.reset();flash($('#p-msg'),'Announcement posted.',true);loadLists();
-});
-$('#ev-form').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const row={title:$('#e-title').value.trim(),event_date:$('#e-date').value,time_label:$('#e-time').value.trim()||null,grades:$('#e-grades').value.trim()||null,audience:$('#e-aud').value};
-  const {error}=await sb.from('events').insert(row);
-  if(error){flash($('#p-msg'),'Not added: '+error.message);return}
-  e.target.reset();flash($('#p-msg'),'Event added to the calendar.',true);loadLists();
+  if(error){flash($('#a-msg'),'Not posted: '+error.message);return}
+  e.target.reset();flash($('#a-msg'),'Announcement posted. It shows in the app now.',true);loadAll();
 });
 
-async function loadLists(){
+$('#sync-btn').addEventListener('click',async()=>{
+  const b=$('#sync-btn');b.disabled=true;b.textContent='Updating…';
+  const {data,error}=await sb.functions.invoke('sync-website',{body:{}});
+  b.disabled=false;b.textContent='Update from website now';
+  if(error&&!data){$('#sync-detail').textContent='Update failed: '+error.message;return}
+  loadAll();
+});
+
+async function loadAll(){
   const today=new Date().toISOString().slice(0,10);
-  const [{data:ann},{data:ev}]=await Promise.all([
-    sb.from('announcements').select('*').order('pinned',{ascending:false}).order('publish_on',{ascending:false}).limit(50),
-    sb.from('events').select('*').gte('event_date',today).order('event_date').limit(100)
+  const [dev,notes,ann,runs]=await Promise.all([
+    sb.from('push_subscriptions').select('endpoint',{count:'exact',head:true}),
+    sb.from('notifications').select('*').order('created_at',{ascending:false}).limit(30),
+    sb.from('announcements').select('*').or('expires_on.is.null,expires_on.gte.'+today).order('pinned',{ascending:false}).order('created_at',{ascending:false}).limit(60),
+    sb.from('sync_runs').select('*').order('ran_at',{ascending:false}).limit(1)
   ]);
-  $('#ann-list').innerHTML=(ann||[]).map(a=>`<div class="row"><div class="t"><b>${esc(a.title)}</b><small>${AUD[a.audience]}${a.pinned?' · Pinned':''}${a.expires_on?' · until '+fmtDate(a.expires_on):''}</small>${a.body?`<p>${esc(a.body)}</p>`:''}</div><button class="del" data-del="announcements:${a.id}">Remove</button></div>`).join('')||'<div class="row muted">No announcements yet.</div>';
-  $('#ev-list').innerHTML=(ev||[]).map(x=>`<div class="row"><div class="t"><b>${esc(x.title)}</b><small>${fmtDate(x.event_date)}${x.time_label?' · '+esc(x.time_label):''} · ${esc(x.grades||'All grades')} · ${AUD[x.audience]}</small></div><button class="del" data-del="events:${x.id}">Remove</button></div>`).join('')||'<div class="row muted">No upcoming events.</div>';
+  DEVICES=dev.count||0;
+  $('#st-devices').textContent=DEVICES;
+  $('#st-sent').textContent=(notes.data||[]).length;
+  const n=notes.data||[];
+  $('#note-list').innerHTML=n.map(x=>`<div class="row"><div class="t"><b>${esc(x.title)}</b>${x.body?`<p>${esc(x.body)}</p>`:''}<small>${when(x.created_at)} · delivered to ${x.sent_count}${x.failed_count?` · ${x.failed_count} failed`:''}${x.sent_by?' · '+esc(x.sent_by):''}</small></div></div>`).join('')||'<div class="row muted">No notifications sent yet.</div>';
+  $('#ann-list').innerHTML=(ann.data||[]).map(a=>`<div class="row"><div class="t"><b>${esc(a.title)}${a.source==='website'?'<span class="pill">csjax.org</span>':''}${a.pinned?'<span class="pill">Pinned</span>':''}</b>${a.body?`<p>${esc(a.body)}</p>`:''}<small>${a.expires_on?'Until '+new Date(a.expires_on+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'No end date'}</small></div>${a.source==='admin'?`<button class="del" data-del="${a.id}">Remove</button>`:''}</div>`).join('')||'<div class="row muted">No announcements.</div>';
+  const r=(runs.data||[])[0];
+  if(r){
+    $('#st-sync').textContent=new Date(r.ran_at).toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+    $('#st-sync-l').textContent='Last website update '+new Date(r.ran_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const res=r.details?.results||{},err=r.details?.errors||{};
+    $('#sync-detail').textContent=`Last update ${when(r.ran_at)} (${r.trigger==='schedule'?'automatic':'manual'}): `+
+      [res.calendar&&`${res.calendar.events} calendar events`,res.announcements&&`${res.announcements.announcements} announcements`,res.documentLibrary&&`${res.documentLibrary.field_trips} permission slips, ${res.documentLibrary.documents} documents`].filter(Boolean).join(', ')+
+      (Object.keys(err).length?`. Problem: ${Object.values(err).join('; ')}`:'.');
+  }
 }
 document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-del]');if(!b)return;
   if(!b.classList.contains('confirm')){b.classList.add('confirm');b.textContent='Tap to confirm';setTimeout(()=>{b.classList.remove('confirm');b.textContent='Remove'},3000);return}
-  const [table,id]=b.dataset.del.split(':');
-  const {error}=await sb.from(table).delete().eq('id',id);
-  if(error){flash($('#p-msg'),'Not removed: '+error.message);return}
-  flash($('#p-msg'),'Removed.',true);loadLists();
+  const {error}=await sb.from('announcements').update({expires_on:new Date(Date.now()-864e5).toISOString().slice(0,10)}).eq('id',b.dataset.del);
+  if(error){flash($('#a-msg'),'Not removed: '+error.message);return}
+  loadAll();
 });
 route();
 </script>

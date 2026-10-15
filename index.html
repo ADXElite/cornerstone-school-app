@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cornerstone School</title>
-<meta name="description" content="The Cornerstone Christian School app for parents and staff.">
-<meta name="theme-color" content="#E4010D">
+<meta name="description" content="The Cornerstone Christian School app for families and staff.">
+<meta name="theme-color" content="#141213">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -16,42 +16,38 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: phone app shell — red header band, scrolling screen, fixed bottom tab bar */
+/* Layout: phone app shell — black logo header, scrolling screen, fixed bottom tab bar */
 :root{
   --red:#E4010D; --red-deep:#B00009; --ink:#141213; --bg:#F6F4F4; --surface:#FFFFFF;
   --muted:#6B6466; --line:#E4DFDF; --chip:#FBE9EA; --chip-ink:#A0000A; --on-red:#FFFFFF;
-  --ok:#1E7A46; --warn:#9A5B00;
+  --head:#141213; --ok:#1E7A46; --ok-bg:#E6F4EC;
   --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
   --body:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --red:#F2222D; --red-deep:#C3000B; --ink:#F3EFEF; --bg:#121011; --surface:#1D1A1B;
   --muted:#A69EA0; --line:#322D2E; --chip:#3A1416; --chip-ink:#FF8C92; --on-red:#FFFFFF;
-  --ok:#5BC98A; --warn:#E7A64A; color-scheme:dark}}
+  --head:#0B0A0A; --ok:#5BC98A; --ok-bg:#12291C; color-scheme:dark}}
 :root[data-theme="dark"]{
   --red:#F2222D; --red-deep:#C3000B; --ink:#F3EFEF; --bg:#121011; --surface:#1D1A1B;
   --muted:#A69EA0; --line:#322D2E; --chip:#3A1416; --chip-ink:#FF8C92; --on-red:#FFFFFF;
-  --ok:#5BC98A; --warn:#E7A64A; color-scheme:dark}
+  --head:#0B0A0A; --ok:#5BC98A; --ok-bg:#12291C; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--red);outline-offset:2px;border-radius:6px}
+img{max-width:100%}
 
-/* Header band */
-.top{background:var(--red);color:var(--on-red);position:sticky;top:0;z-index:5;padding-top:env(safe-area-inset-top,0px)}
-.top-in{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px;display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto}
-.crest{width:40px;height:44px;flex:none}
-.brand{min-width:0;flex:1}
-.brand b{display:block;font-family:var(--display);font-weight:800;font-size:1.45rem;letter-spacing:.02em;line-height:1;text-transform:uppercase}
-.brand span{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
-.role{display:flex;background:rgba(0,0,0,.22);border-radius:999px;padding:3px;flex:none}
-.role button{border:0;background:transparent;color:var(--on-red);padding:6px 11px;border-radius:999px;font-weight:600;font-size:.82rem;cursor:pointer}
-.role button[aria-pressed="true"]{background:#fff;color:#B00009}
+/* Header */
+.top{background:var(--head);position:sticky;top:0;z-index:5;padding-top:env(safe-area-inset-top,0px);border-bottom:3px solid #E4010D}
+.top-in{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;justify-content:center;max-width:720px;margin:0 auto}
+.top img{height:62px;width:auto;display:block}
 
 /* Screens */
-main{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 110px}
+main{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px calc(100px + env(safe-area-inset-bottom,0px))}
 .screen{display:grid;gap:22px}
 h2{font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
 h1{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1.05;margin:0;text-wrap:balance;text-transform:uppercase;letter-spacing:.01em}
@@ -59,17 +55,26 @@ p{margin:0}
 .muted{color:var(--muted)}
 
 /* Today panel */
-.today{background:var(--ink);color:var(--bg);border-radius:18px;padding:18px;display:grid;gap:14px}
+.today{background:#141213;color:#F6F4F4;border-radius:18px;padding:18px;display:grid;gap:14px}
 .today .date{font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
-.today h1{color:var(--bg)}
+.today h1{color:#F6F4F4}
 .status{display:inline-flex;align-items:center;gap:8px;font-weight:600}
-.dot{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(228,1,13,.25)}
-.bell{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-variant-numeric:tabular-nums}
-.bell div{border-top:3px solid rgba(255,255,255,.25);padding-top:6px}
-:root[data-theme="dark"] .bell div{border-top-color:rgba(0,0,0,.2)}
-.bell div.on{border-top-color:var(--red)}
-.bell b{display:block;font-family:var(--display);font-size:1.25rem;font-weight:700;line-height:1.1}
+.dot{width:10px;height:10px;border-radius:50%;background:#E4010D;box-shadow:0 0 0 4px rgba(228,1,13,.25);flex:none}
+.bell{display:grid;grid-template-columns:1fr 1fr 1.45fr 1fr;gap:8px;font-variant-numeric:tabular-nums}
+.bell div{border-top:3px solid rgba(255,255,255,.25);padding-top:6px;min-width:0}
+.bell div.on{border-top-color:#E4010D}
+.bell b{display:block;font-family:var(--display);font-size:1.15rem;font-weight:700;line-height:1.1}
+.bell b small{font-size:.75em;font-weight:600;opacity:.8}
 .bell span{font-size:.74rem;opacity:.8;line-height:1.2;display:block}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px}
+.card.alert{border:2px solid var(--red)}
+.card-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.card b.t{font-size:1rem}
+.card ol{margin:0;padding-left:18px;font-size:.92rem;display:grid;gap:3px}
+.card.on{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);font-weight:600}
+.x{border:0;background:transparent;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1}
 
 /* Quick actions */
 .quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -87,13 +92,23 @@ p{margin:0}
 .row:first-child{border-top:0}
 .row .txt{min-width:0;flex:1}
 .row b{display:block;font-weight:700;line-height:1.25}
-.row p{color:var(--muted);font-size:.92rem;margin-top:2px}
+.row p{color:var(--muted);font-size:.92rem;margin-top:2px;overflow-wrap:anywhere}
+.row.past{opacity:.55}
 .cal{width:50px;flex:none;text-align:center;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
 .cal i{display:block;font-style:normal;background:var(--red);color:var(--on-red);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 0}
 .cal b{font-family:var(--display);font-size:1.45rem;line-height:1.2;font-variant-numeric:tabular-nums}
 .tag{display:inline-block;background:var(--chip);color:var(--chip-ink);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-top:6px}
 .chev{color:var(--muted);flex:none;align-self:center}
 .more{display:inline-block;margin-top:10px;color:var(--red);font-weight:700;text-decoration:none}
+.empty{padding:16px;color:var(--muted)}
+.monthhead{font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);padding:10px 14px 6px;border-top:1px solid var(--line);background:var(--bg)}
+.monthhead:first-child{border-top:0}
+
+/* Grade chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;font-size:.9rem;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.slip{display:inline-flex;margin-top:8px;background:var(--red);color:var(--on-red);text-decoration:none;font-weight:700;font-size:.88rem;padding:7px 12px;border-radius:9px}
 
 /* Info accordions */
 details{background:var(--surface);border:1px solid var(--line);border-radius:14px}
@@ -107,11 +122,12 @@ details[open] summary::after{content:"–"}
 .body{padding:0 16px 16px;display:grid;gap:12px;font-size:.96rem}
 .body h3{margin:4px 0 0;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
 .body ul{margin:0;padding-left:18px;display:grid;gap:4px}
-.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-variant-numeric:tabular-nums}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-variant-numeric:tabular-nums;margin:0}
 .facts dt{color:var(--muted)}
 .facts dd{margin:0;font-weight:600}
 .btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:var(--on-red);text-decoration:none;font-weight:700;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;justify-self:start}
 .btn.ghost{background:transparent;color:var(--red);border:1.5px solid var(--red)}
+.btn:disabled{opacity:.6}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 .note{background:var(--chip);color:var(--chip-ink);border-radius:10px;padding:10px 12px;font-weight:600;font-size:.92rem}
 
@@ -121,113 +137,120 @@ details[open] summary::after{content:"–"}
 .cline .txt{flex:1;min-width:0}
 .cline small{display:block;color:var(--muted);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
 .cline b{font-size:1.05rem;user-select:all;overflow-wrap:anywhere}
-.copy{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;font-weight:600;font-size:.82rem;cursor:pointer}
-
-/* Install card */
-.install{border:2px dashed var(--red);border-radius:14px;padding:14px;display:grid;gap:8px;background:var(--surface)}
-.install-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.install b{font-size:1rem}
-.x{border:0;background:transparent;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1}
-.install ol{margin:0;padding-left:18px;font-size:.92rem;display:grid;gap:3px}
+.copy{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;font-weight:600;font-size:.82rem;cursor:pointer;text-decoration:none;flex:none}
 
 /* Tab bar */
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:6;
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-.tab{border:0;background:transparent;padding:9px 2px 10px;display:grid;justify-items:center;gap:3px;font-size:.72rem;font-weight:600;color:var(--muted);cursor:pointer;position:relative}
-.tab svg{width:23px;height:23px}
+.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+.tab{border:0;background:transparent;padding:9px 0 10px;display:grid;justify-items:center;gap:3px;font-size:.68rem;font-weight:600;color:var(--muted);cursor:pointer;position:relative;min-width:0;white-space:nowrap}
+.tab svg{width:22px;height:22px}
 .tab[aria-current="page"]{color:var(--red)}
-.tab[aria-current="page"]::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--red)}
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-weight:600;font-size:.9rem;z-index:9}
+.tab[aria-current="page"]::before{content:"";position:absolute;top:0;left:24%;right:24%;height:3px;border-radius:0 0 3px 3px;background:var(--red)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-weight:600;font-size:.9rem;z-index:9;max-width:calc(100% - 32px)}
 .foot{text-align:center;font-size:.78rem;color:var(--muted)}
-.foot a{color:var(--muted)}
-.empty{padding:16px;color:var(--muted)}
-@media (max-width:360px){.quick{grid-template-columns:1fr}.role button{padding:6px 8px}}
+@media (max-width:370px){.quick{grid-template-columns:1fr}.tab{font-size:.62rem}.bell{grid-template-columns:1fr 1fr}}
 @media (prefers-reduced-motion:no-preference){.screen{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
 </style>
 </head>
 <body>
 
 <header class="top">
-  <div class="top-in">
-    <svg class="crest" viewBox="0 0 40 44" aria-hidden="true"><path d="M20 1 L38 6 V22 C38 33 30 40 20 43 C10 40 2 33 2 22 V6 Z" fill="#141213" stroke="#fff" stroke-width="2"/><path d="M27 15.5 A8.5 8.5 0 1 0 27 28.5" fill="none" stroke="#E4010D" stroke-width="4.5" stroke-linecap="round"/><path d="M8 9 H32" stroke="#fff" stroke-width="1.2" opacity=".5"/></svg>
-    <div class="brand"><b>Cornerstone</b><span>Christian School · Est. 2002</span></div>
-    <div class="role" role="group" aria-label="I am a">
-      <button id="role-parent" data-role="parent" aria-pressed="true">Parent</button>
-      <button id="role-staff" data-role="staff" aria-pressed="false">Staff</button>
-    </div>
-  </div>
+  <div class="top-in"><img src="/icons/logo-horizontal.webp" alt="Cornerstone Christian School" width="900" height="281"></div>
 </header>
 
 <main id="main">
 
 <!-- HOME -->
-<section class="screen" id="s-home" data-screen="home">
+<section class="screen" data-screen="home">
   <div class="today">
-    <div class="date" id="today-date">Wednesday, October 14</div>
+    <div class="date" id="today-date">Today</div>
     <h1 id="today-head">Go Cougars!</h1>
     <div class="status"><span class="dot"></span><span id="today-status">School day</span></div>
     <div class="bell" aria-label="Daily schedule">
-      <div data-t="8:30"><b>8:30</b><span>School starts</span></div>
-      <div data-t="13:00"><b>1:00</b><span>Dismissal change cutoff</span></div>
-      <div data-t="14:00"><b>2–3</b><span>No early check-outs</span></div>
-      <div data-t="15:00"><b>3:00</b><span>Dismissal</span></div>
+      <div><b>8:30 <small>AM</small></b><span>School starts</span></div>
+      <div><b>1:00 <small>PM</small></b><span>Dismissal change cutoff</span></div>
+      <div><b>2:00–3:00 <small>PM</small></b><span>No early check-outs</span></div>
+      <div><b>3:00 <small>PM</small></b><span>Dismissal</span></div>
     </div>
   </div>
 
-  <div class="install" id="install" hidden>
-    <div class="install-head"><b>Put Cornerstone on your home screen</b><button class="x" id="install-x" aria-label="Dismiss">×</button></div>
+  <div class="card alert" id="push-card" hidden>
+    <div class="card-head"><b class="t" id="push-title">Get school alerts on this phone</b><button class="x" id="push-x" aria-label="Dismiss">×</button></div>
+    <p id="push-text">Turn on notifications for closings, schedule changes and reminders from Cornerstone.</p>
+    <button class="btn" id="push-btn">Turn on notifications</button>
+  </div>
+  <div class="card on" id="push-on" hidden>Notifications are on for this phone.</div>
+
+  <div class="card" id="install" hidden>
+    <div class="card-head"><b class="t">Add Cornerstone to your home screen</b><button class="x" id="install-x" aria-label="Dismiss">×</button></div>
     <button class="btn" id="install-btn" hidden>Install the app</button>
     <ol>
-      <li><b>iPhone:</b> open this page in Safari, tap Share, then <b>Add to Home Screen</b>.</li>
-      <li><b>Android:</b> open in Chrome, tap the ⋮ menu, then <b>Add to Home screen</b>.</li>
+      <li><b>iPhone:</b> open app.csjax.org in Safari, tap Share, then <b>Add to Home Screen</b>. Open it from your home screen to turn on notifications.</li>
+      <li><b>Android:</b> open in Chrome, tap the ⋮ menu, then <b>Install app</b> or <b>Add to Home screen</b>.</li>
     </ol>
   </div>
 
   <div>
-    <h2 id="quick-title">Quick actions</h2>
+    <h2>Quick actions</h2>
     <div class="quick" id="quick"></div>
+  </div>
+
+  <div id="alerts-wrap" hidden>
+    <h2>Recent alerts</h2>
+    <div class="list" id="home-alerts"></div>
   </div>
 
   <div>
     <h2>Announcements</h2>
     <div class="list" id="home-news"></div>
-    <a class="more" href="https://www.csjax.org/news-and-events/announcements.cfm" target="_blank" rel="noopener">All announcements →</a>
+    <a class="more" href="https://www.csjax.org/news-and-events/announcements.cfm" target="_blank" rel="noopener">All announcements on csjax.org →</a>
   </div>
 
   <div>
     <h2>Coming up</h2>
     <div class="list" id="home-events"></div>
-    <a class="more" href="#" data-go="calendar">See the calendar →</a>
+    <a class="more" href="#calendar" data-go="calendar">See the full calendar →</a>
   </div>
 </section>
 
 <!-- CALENDAR -->
-<section class="screen" id="s-calendar" data-screen="calendar" hidden>
-  <div><h1>Calendar</h1><p class="muted">Upcoming events from the school calendar.</p></div>
+<section class="screen" data-screen="calendar" hidden>
+  <div><h1>Calendar</h1><p class="muted">From the Cornerstone school calendar.</p></div>
   <div class="list" id="cal-list"></div>
-  <a class="btn" href="https://www.csjax.org/news-and-events/" target="_blank" rel="noopener">Open full school calendar</a>
+  <div class="btns">
+    <a class="btn" href="https://calendar.google.com/calendar/embed?src=ccsjax.org_2pbo7t17fq764q7u13u9jvce8c%40group.calendar.google.com&amp;ctz=America%2FNew_York" target="_blank" rel="noopener">Open Google Calendar</a>
+    <a class="btn ghost" href="https://calendar.google.com/calendar/r?cid=ccsjax.org_2pbo7t17fq764q7u13u9jvce8c%40group.calendar.google.com" target="_blank" rel="noopener">Add to my calendar</a>
+  </div>
+</section>
+
+<!-- FIELD TRIPS -->
+<section class="screen" data-screen="trips" hidden>
+  <div><h1>Field Trips</h1><p class="muted">Permission slips by grade level. Tap a trip to sign the form.</p></div>
+  <div class="chips" id="trip-chips" role="group" aria-label="Grade level"></div>
+  <div class="list" id="trip-list"></div>
+  <a class="more" href="https://www.csjax.org/school-info/document-library.cfm" target="_blank" rel="noopener">Document Library on csjax.org →</a>
 </section>
 
 <!-- INFO -->
-<section class="screen" id="s-info" data-screen="info" hidden>
+<section class="screen" data-screen="info" hidden>
   <div><h1>School Info</h1><p class="muted">Everyday procedures, in one place.</p></div>
   <div>
-    <details id="d-dismissal" open>
+    <details open>
       <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13l2-6h14l2 6v5H3z"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/></svg></span>Arrival, Dismissal &amp; Pickup</summary>
       <div class="body">
         <dl class="facts">
           <dt>School starts</dt><dd>8:30 AM</dd>
           <dt>Dismissal</dt><dd>3:00 PM</dd>
           <dt>Change cutoff</dt><dd>1:00 PM same day</dd>
-          <dt>No check-outs</dt><dd>2:00–3:00 PM</dd>
+          <dt>No early check-outs</dt><dd>2:00 PM to 3:00 PM</dd>
         </dl>
         <h3>Dismissal changes</h3>
         <p>All afternoon dismissal changes go through the <b>KidAccount</b> app, one-time or recurring (for example, car rider to bus rider). Same-day changes must be in by 1:00 PM.</p>
         <h3>Late sign-in</h3>
         <p>Students arriving after 8:30 AM sign in at the iPad kiosk in the Front Office with their Student ID badge.</p>
         <h3>Early check-out</h3>
-        <p>A parent or authorized person signs the student out at the Front Office kiosk and scans their driver's license. For safety, no early check-outs between 2:00 and 3:00 PM for any reason.</p>
+        <p>A parent or authorized person signs the student out at the Front Office kiosk and scans their driver's license. For safety, no early check-outs from 2:00 PM to 3:00 PM for any reason.</p>
         <h3>Car line</h3>
         <p>Display your student's Dismissal Sign on the dashboard so staff can scan the barcode. Without the sign, show a valid photo ID.</p>
         <h3>Bus riders</h3>
@@ -239,15 +262,15 @@ details[open] summary::after{content:"–"}
       </div>
     </details>
 
-    <details id="d-absence">
-      <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M9 14l6 0"/></svg></span>Absences</summary>
+    <details>
+      <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M9 14h6"/></svg></span>Absences</summary>
       <div class="body">
         <p>Parents must notify the school office whenever a child will be absent. Use the online absence form, or report it through KidAccount.</p>
         <a class="btn" href="https://excused.csjax.org/" target="_blank" rel="noopener">Report an absence</a>
       </div>
     </details>
 
-    <details id="d-care">
+    <details>
       <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Extended Care</summary>
       <div class="body">
         <h3>Morning care · 6:30–8:00 AM</h3>
@@ -269,7 +292,7 @@ details[open] summary::after{content:"–"}
       </div>
     </details>
 
-    <details id="d-meals">
+    <details>
       <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 7h3v11"/></svg></span>Meals</summary>
       <div class="body">
         <p>Breakfast and lunch are <b>free for every student</b> in 2026–27 through the federal Community Eligibility Provision. No application or payment needed.</p>
@@ -278,14 +301,13 @@ details[open] summary::after{content:"–"}
       </div>
     </details>
 
-    <details id="d-bus">
+    <details>
       <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M7 21v-3M17 21v-3"/></svg></span>Bus Routes</summary>
       <div class="body">
         <p>Every bus rider must be registered each school year, one form per student. Seats are first come, first served and a request doesn't guarantee a spot.</p>
         <div class="btns">
-          <a class="btn" href="https://www.csjax.org/editoruploads/files/01%20-%20School%20Bus%20Routes%20(2026-2027).xlsx.pdf" target="_blank" rel="noopener">2026–27 route schedule</a>
+          <a class="btn" href="https://www.csjax.org/school-info/bus-route-information.cfm" target="_blank" rel="noopener">Bus info &amp; sign up</a>
           <a class="btn ghost" href="https://www.google.com/maps/d/u/0/edit?mid=1XLBUiszr7mlAGVP4fuRFYUfpZOVo4QQx&amp;usp=sharing" target="_blank" rel="noopener">Bus stop map</a>
-          <a class="btn ghost" href="https://www.csjax.org/school-info/bus-route-information.cfm" target="_blank" rel="noopener">Sign up</a>
         </div>
       </div>
     </details>
@@ -293,13 +315,13 @@ details[open] summary::after{content:"–"}
 </section>
 
 <!-- LINKS -->
-<section class="screen" id="s-links" data-screen="links" hidden>
-  <div><h1 id="links-head">Links</h1><p class="muted" id="links-sub">Portals, forms and documents.</p></div>
+<section class="screen" data-screen="links" hidden>
+  <div><h1>Links</h1><p class="muted">Portals, documents and forms.</p></div>
   <div id="links-groups"></div>
 </section>
 
 <!-- CONTACT -->
-<section class="screen" id="s-contact" data-screen="contact" hidden>
+<section class="screen" data-screen="contact" hidden>
   <div><h1>Contact</h1><p class="muted">Front Office · Cornerstone Christian School</p></div>
   <div class="contact">
     <div class="cline"><div class="txt"><small>Phone</small><b>(904) 730-5500</b></div><a class="copy" href="tel:+19047305500">Call</a><button class="copy" data-copy="(904) 730-5500">Copy</button></div>
@@ -313,7 +335,7 @@ details[open] summary::after{content:"–"}
     <a class="btn ghost" href="https://www.csjax.org/about-us/faculty-staff.cfm" target="_blank" rel="noopener">Faculty &amp; Staff</a>
   </div>
   <p class="foot">Kindergarten through 12th Grade · Educating Jacksonville's youth since 2002</p>
-  <p class="foot"><a href="/admin">Staff sign-in to post updates</a></p>
+  <p class="foot" id="synced"></p>
 </section>
 
 </main>
@@ -322,6 +344,7 @@ details[open] summary::after{content:"–"}
   <div class="tabs-in">
     <button class="tab" data-go="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
     <button class="tab" data-go="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendar</button>
+    <button class="tab" data-go="trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M3 11h18M7 20v-3M17 20v-3"/><circle cx="7.5" cy="14" r="1"/><circle cx="16.5" cy="14" r="1"/></svg>Field Trips</button>
     <button class="tab" data-go="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>Info</button>
     <button class="tab" data-go="links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Links</button>
     <button class="tab" data-go="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Contact</button>
@@ -330,207 +353,232 @@ details[open] summary::after{content:"–"}
 <div class="toast" id="toast" hidden></div>
 
 <script>
+const SB_URL='https://cvvdwhgdiqnoqgxtgzfw.supabase.co';
+const SB_KEY='sb_publishable_hnUHrqYS2un679djbzsXxg_oLYDQDp0';
+const VAPID_PUBLIC='BEdnr4yPaJwpJFaIgOZhqymxN25eKxIQpK5rcudvfU1ERy3t4WQtlk8ialLqFbLqIvckyc0auLReADT7PWrGMWg';
+
 const ICON={
-  doc:'<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/>',
   check:'<path d="M5 12l5 5 9-10"/>',
   swap:'<path d="M4 8h14l-3-3M20 16H6l3 3"/>',
   food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 7h3v11"/>',
-  grad:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
-  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
-  people:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 0 1 0 6M18 15c2 .5 3 2 3 5"/>',
-  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
-  folder:'<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
-  bus:'<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M7 21v-3M17 21v-3"/>'
+  grad:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>'
 };
 const ic=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
-
-const QUICK={
-  parent:[
-    {t:'Report an absence',s:'Online absence form',u:'https://excused.csjax.org/',i:'check'},
-    {t:'Change dismissal',s:'KidAccount, by 1:00 PM',u:'https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf',i:'swap'},
-    {t:'FACTS',s:'Grades, reports, billing',u:'https://cs-fl.client.renweb.com/pwr/',i:'grad'},
-    {t:'Lunch menu',s:'Free meals for all',u:'https://www.schoolnutritionandfitness.com/?sid=1786582954026',i:'food'}
-  ],
-  staff:[
-    {t:'FACTS SIS',s:'Attendance & grades',u:'https://cs-fl.client.renweb.com/pwr/',i:'grad'},
-    {t:'Clever',s:'Classroom apps',u:'https://clever.com/in/csjax',i:'key'},
-    {t:'BambooHR',s:'Time off & HR',u:'https://csjax.bamboohr.com/',i:'people'},
-    {t:'School email',s:'Google Workspace',u:'https://mail.google.com/',i:'mail'}
-  ]
-};
-
-const LINKS={
-  parent:[
-    ['Everyday',[
-      ['FACTS Family Portal','Grades, progress reports, billing','https://cs-fl.client.renweb.com/pwr/'],
-      ['Report an Absence','excused.csjax.org','https://excused.csjax.org/'],
-      ['KidAccount Instructions','Dismissal changes & absences','https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf'],
-      ['Clever Login','Student learning apps','https://clever.com/in/csjax'],
-      ['Lunch Menu','School Nutrition & Fitness','https://www.schoolnutritionandfitness.com/?sid=1786582954026']]],
-    ['Forms',[
-      ['Replace ID Badge or Dismissal Sign','Lost or damaged','https://csjax.jotform.com/262516462811051'],
-      ['Request Student Records','Records request form','https://csjax.jotform.com/262805791895069'],
-      ['Morning Extended Care','Application','https://csjax.jotform.com/260494712128053'],
-      ['Afternoon Extended Care','Self-pay application','https://csjax.jotform.com/261116384043955']]],
-    ['Policies & Documents',[
-      ['School Policies','Health policy & procedures','https://www.csjax.org/alumni/health-policy-and-procedures.cfm'],
-      ['Document Library','Handbooks and forms','https://www.csjax.org/school-info/document-library.cfm'],
-      ['Bus Route Schedule','2026–27','https://www.csjax.org/editoruploads/files/01%20-%20School%20Bus%20Routes%20(2026-2027).xlsx.pdf']]],
-    ['Enrollment',[
-      ['Enrollment Documents','For new and returning families','https://www.csjax.org/admissions/enrollment-documents.cfm'],
-      ['Financial Aid','Scholarship information','https://www.csjax.org/admissions/financial-aid-information.cfm'],
-      ['Enrollment Waiting List','Join the list','https://csjax.jotform.com/262026275901958'],
-      ['Schedule a Campus Tour','For families you refer','https://csjax.jotform.com/260485249856975']]]
-  ],
-  staff:[
-    ['Daily tools',[
-      ['FACTS SIS','Attendance, gradebook','https://cs-fl.client.renweb.com/pwr/'],
-      ['Clever','Classroom app launcher','https://clever.com/in/csjax'],
-      ['Google Workspace Email','School email','https://mail.google.com/'],
-      ['Lunch Menu','This week\'s meals','https://www.schoolnutritionandfitness.com/?sid=1786582954026']]],
-    ['HR',[
-      ['BambooHR','Time off, pay stubs, profile','https://csjax.bamboohr.com/'],
-      ['Open Positions','Share with candidates','https://csjax.bamboohr.com/careers']]],
-    ['Reference',[
-      ['School Policies','Health policy & procedures','https://www.csjax.org/alumni/health-policy-and-procedures.cfm'],
-      ['Document Library','Handbooks and forms','https://www.csjax.org/school-info/document-library.cfm'],
-      ['Dismissal Procedures','Car line, bus, kiosk','https://www.csjax.org/school-info/dismissal.cfm'],
-      ['Bus Route Schedule','2026–27','https://www.csjax.org/editoruploads/files/01%20-%20School%20Bus%20Routes%20(2026-2027).xlsx.pdf'],
-      ['Faculty & Staff Directory','csjax.org','https://www.csjax.org/about-us/faculty-staff.cfm']]]
-  ]
-};
-
-const NEWS=[
-  {t:'Dismissal Updates',d:'Cornerstone now uses KidAccount for afternoon dismissal. Set up the app to submit transportation changes and absences.',u:'https://www.csjax.org/school-info/dismissal.cfm',tag:'New'},
-  {t:'1st Quarter Progress Reports',d:'Available in your FACTS account as of September 9.',u:'https://cs-fl.client.renweb.com/pwr/'},
-  {t:'No School – Labor Day',d:'Monday, September 7.',u:'https://www.csjax.org/news-and-events/announcements.cfm'}
+const QUICK=[
+  {t:'Report an absence',s:'Online absence form',u:'https://excused.csjax.org/',i:'check'},
+  {t:'Change dismissal',s:'KidAccount, by 1:00 PM',u:'https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf',i:'swap'},
+  {t:'FACTS',s:'Grades & progress reports',u:'https://cs-fl.client.renweb.com/pwr/',i:'grad'},
+  {t:'Lunch menu',s:'Free meals for all',u:'https://www.schoolnutritionandfitness.com/?sid=1786582954026',i:'food'}
+];
+const LINKS_TOP=['Everyday',[
+  ['FACTS','Grades & progress reports','https://cs-fl.client.renweb.com/pwr/'],
+  ['Report an Absence','excused.csjax.org','https://excused.csjax.org/'],
+  ['KidAccount Instructions','Dismissal changes & absences','https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf'],
+  ['Clever Login','Student learning apps','https://clever.com/in/csjax'],
+  ['Lunch Menu','School Nutrition & Fitness','https://www.schoolnutritionandfitness.com/?sid=1786582954026']]];
+const LINKS_BOTTOM=[
+  ['More Forms',[
+    ['Request Student Records','Records request form','https://csjax.jotform.com/262805791895069'],
+    ['Morning Extended Care','Application','https://csjax.jotform.com/260494712128053'],
+    ['Afternoon Extended Care','Self-pay application','https://csjax.jotform.com/261116384043955']]],
+  ['Staff',[
+    ['BambooHR','Time off, pay stubs, profile','https://csjax.bamboohr.com/'],
+    ['Faculty & Staff Directory','csjax.org','https://www.csjax.org/about-us/faculty-staff.cfm']]]
 ];
 
-const EVENTS=[
-  {d:'2026-10-15',t:'Field Trip: Cummer Museum',g:'K5 – 2nd Grade'},
-  {d:'2026-10-16',t:'Senior Lunch',g:'Seniors',tm:'10:30 AM – 1:30 PM'},
-  {d:'2026-10-19',t:'1st Quarter Award Ceremony',g:'All grades'},
-  {d:'2026-10-23',t:'Field Trip: Cummer Museum',g:'3rd – 5th Grade'}
-];
+/* Built-in copy (used until live data loads, and offline) */
+let NEWS=[{t:'Dismissal Updates',d:'Cornerstone School has partnered with KidAccount to assist with Afternoon Student Dismissal.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
+let EVENTS=[];
+let TRIPS=[
+ ['Kindergarten thru 2nd Grade','2026-10-15','Cummer Museum','https://csjax.jotform.com/262595812403963'],
+ ['Kindergarten thru 2nd Grade','2026-11-06','Color Me Mine','https://csjax.jotform.com/262584264079971'],
+ ['Kindergarten thru 2nd Grade','2026-12-07','Nutcracker Ballet (Student Permission Slip)','https://csjax.jotform.com/262576336118966'],
+ ['Kindergarten thru 2nd Grade','2026-12-07','Nutcracker Ballet (Chaperone Sign-Up)','https://csjax.jotform.com/262595574992981'],
+ ['3rd Grade thru 5th Grade','2026-10-23','Cummer Museum','https://csjax.jotform.com/262585054228965'],
+ ['3rd Grade thru 5th Grade','2026-11-06','Color Me Mine','https://csjax.jotform.com/262584979957989'],
+ ['3rd Grade thru 5th Grade','2026-12-07','Nutcracker Ballet (Student Permission Slip)','https://csjax.jotform.com/262576336118966'],
+ ['3rd Grade thru 5th Grade','2026-12-07','Nutcracker Ballet (Chaperone Sign-Up)','https://csjax.jotform.com/262595574992981'],
+ ['6th Grade thru 12th Grade','2026-11-06','Conners Amazing Acres','https://csjax.jotform.com/262597516821970'],
+ ['6th Grade thru 12th Grade','2026-12-07','Nutcracker Ballet (Student Permission Slip)','https://csjax.jotform.com/262576336118966'],
+ ['6th Grade thru 12th Grade','2026-12-07','Nutcracker Ballet (Chaperone Sign-Up)','https://csjax.jotform.com/262595574992981'],
+ ['6th Grade thru 12th Grade','2027-04-15','Grad Bash (Senior Trip 12th Grade Only)','https://csjax.jotform.com/262595541536969']
+].map(([g,d,t,u])=>({g,d,t,u}));
+let DOCS=[];
+let ALERTS=[];
 
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const chev='<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
+const localISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dt=s=>new Date(s+'T12:00:00');
 
 function evRow(e){
-  const dt=new Date(e.d+'T12:00:00');
-  const mo=dt.toLocaleDateString('en-US',{month:'short'});
-  const wd=dt.toLocaleDateString('en-US',{weekday:'long'});
-  return `<div class="row"><div class="cal"><i>${mo}</i><b>${dt.getDate()}</b></div><div class="txt"><b>${esc(e.t)}</b><p>${wd}${e.tm?' · '+esc(e.tm):''}</p><span class="tag">${esc(e.g)}</span></div></div>`;
+  const d=dt(e.d);
+  const wd=d.toLocaleDateString('en-US',{weekday:'long'});
+  return `<div class="row"><div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div><div class="txt"><b>${esc(e.t)}</b><p>${wd}${e.tm?' · '+esc(e.tm):''}${e.loc?' · '+esc(e.loc):''}</p></div></div>`;
 }
-let ROLE='parent';
-const forRole=x=>!x.a||x.a==='all'||x.a===ROLE;
-function upcoming(){
-  const t=new Date();t.setHours(0,0,0,0);
-  return EVENTS.filter(e=>new Date(e.d+'T23:59:00')>=t&&forRole(e)).sort((a,b)=>a.d.localeCompare(b.d));
-}
-function renderFeeds(){
-  const news=NEWS.filter(forRole);
-  $('#home-news').innerHTML=news.length?news.map(n=>`<${n.u?'a':'div'} class="row"${n.u?` href="${esc(n.u)}" target="_blank" rel="noopener"`:''}><div class="txt"><b>${esc(n.t)}</b>${n.d?`<p>${esc(n.d)}</p>`:''}${n.tag?`<span class="tag">${esc(n.tag)}</span>`:''}</div>${n.u?chev:''}</${n.u?'a':'div'}>`).join(''):'<p class="empty">No announcements right now.</p>';
+const upcoming=()=>{const t=localISO();return EVENTS.filter(e=>e.d>=t).sort((a,b)=>a.d.localeCompare(b.d)||(a.s||'').localeCompare(b.s||''))};
+
+function renderHome(){
+  $('#home-news').innerHTML=NEWS.length?NEWS.map(n=>`<${n.u?'a':'div'} class="row"${n.u?` href="${esc(n.u)}" target="_blank" rel="noopener"`:''}><div class="txt"><b>${esc(n.t)}</b>${n.d?`<p>${esc(n.d)}</p>`:''}${n.pin?'<span class="tag">Pinned</span>':''}</div>${n.u?chev:''}</${n.u?'a':'div'}>`).join(''):'<p class="empty">No announcements right now.</p>';
   const up=upcoming();
-  const none='<p class="empty">No upcoming events posted yet.</p>';
-  $('#home-events').innerHTML=up.length?up.slice(0,3).map(evRow).join(''):none;
-  $('#cal-list').innerHTML=up.length?up.map(evRow).join(''):none;
+  $('#home-events').innerHTML=up.length?up.slice(0,4).map(evRow).join(''):'<p class="empty">Loading the school calendar…</p>';
+  const recent=ALERTS.filter(a=>Date.now()-new Date(a.at)<7*864e5).slice(0,3);
+  $('#alerts-wrap').hidden=!recent.length;
+  $('#home-alerts').innerHTML=recent.map(a=>`<${a.u?'a':'div'} class="row"${a.u?` href="${esc(a.u)}" target="_blank" rel="noopener"`:''}><div class="txt"><b>${esc(a.t)}</b>${a.b?`<p>${esc(a.b)}</p>`:''}<p>${new Date(a.at).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</p></div>${a.u?chev:''}</${a.u?'a':'div'}>`).join('');
 }
-
-/* Live content from Supabase (falls back to the built-in copy above if offline) */
-const SB_URL='https://cvvdwhgdiqnoqgxtgzfw.supabase.co';
-const SB_KEY='sb_publishable_hnUHrqYS2un679djbzsXxg_oLYDQDp0';
-async function sbGet(path){
-  const r=await fetch(SB_URL+'/rest/v1/'+path,{headers:{apikey:SB_KEY}});
-  if(!r.ok)throw new Error(r.status);
-  return r.json();
+function renderCalendar(){
+  const up=upcoming();
+  if(!up.length){$('#cal-list').innerHTML='<p class="empty">No upcoming events found. Check back soon.</p>';return}
+  let html='',month='';
+  up.forEach(e=>{const m=dt(e.d).toLocaleDateString('en-US',{month:'long',year:'numeric'});if(m!==month){month=m;html+=`<div class="monthhead">${m}</div>`}html+=evRow(e)});
+  $('#cal-list').innerHTML=html;
 }
-async function loadLive(){
-  try{
-    const today=new Date().toISOString().slice(0,10);
-    const [ann,ev]=await Promise.all([
-      sbGet('announcements?select=*&order=pinned.desc,publish_on.desc&limit=20'),
-      sbGet('events?select=*&event_date=gte.'+today+'&order=event_date.asc&limit=60')
-    ]);
-    NEWS.length=0;
-    ann.forEach(a=>NEWS.push({t:a.title,d:a.body,u:a.link,a:a.audience,tag:a.pinned?'Pinned':''}));
-    EVENTS.length=0;
-    ev.forEach(e=>EVENTS.push({d:e.event_date,t:e.title,g:e.grades||'All grades',tm:e.time_label,a:e.audience}));
-    renderFeeds();
-    store.set('ccs-cache',JSON.stringify({NEWS,EVENTS}));
-  }catch(e){
-    try{const c=JSON.parse(store.get('ccs-cache')||'null');if(c){NEWS.splice(0,NEWS.length,...c.NEWS);EVENTS.splice(0,EVENTS.length,...c.EVENTS);renderFeeds()}}catch(_){}
-  }
+let GRADE=store.get('ccs-grade');
+function renderTrips(){
+  const groups=[...new Set(TRIPS.map(t=>t.g))];
+  if(!groups.includes(GRADE))GRADE=groups[0];
+  const short=g=>g.replace(/Kindergarten/i,'K').replace(/\s*Grades?\b/gi,'').replace(/\s*(thru|through|-|to)\s*/i,'–').trim();
+  $('#trip-chips').innerHTML=groups.map(g=>`<button data-grade="${esc(g)}" aria-pressed="${g===GRADE}" title="${esc(g)}">${esc(short(g))}</button>`).join('');
+  const t=localISO();
+  const list=TRIPS.filter(x=>x.g===GRADE).sort((a,b)=>(a.d||'').localeCompare(b.d||''));
+  const rows=list.map(x=>{const d=x.d?dt(x.d):null;const past=x.d&&x.d<t;
+    return `<div class="row${past?' past':''}">${d?`<div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div>`:''}<div class="txt"><b>${esc(x.t)}</b><p>${d?d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):''}${past?' · Trip date has passed':''}</p><a class="slip" href="${esc(x.u)}" target="_blank" rel="noopener">${/chaperone/i.test(x.t)?'Sign up':'Sign permission slip'}</a></div></div>`}).join('');
+  $('#trip-list').innerHTML=(GRADE?`<div class="monthhead">${esc(GRADE)}</div>`:'')+(rows||'<p class="empty">No field trips posted for this grade level yet.</p>');
 }
-
-function renderRole(role){
-  ROLE=role;
-  document.querySelectorAll('.role button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
-  $('#quick').innerHTML=QUICK[role].map(q=>`<a class="qa" href="${q.u}" target="_blank" rel="noopener"><span class="ic">${ic(q.i)}</span><div><b>${esc(q.t)}</b><small>${esc(q.s)}</small></div></a>`).join('');
-  $('#quick-title').textContent=role==='staff'?'Staff tools':'Quick actions';
-  $('#links-head').textContent=role==='staff'?'Staff Links':'Parent Links';
-  $('#links-sub').textContent=role==='staff'?'Tools and references for faculty and staff.':'Portals, forms and documents for families.';
-  $('#links-groups').innerHTML=LINKS[role].map(([g,items])=>`<div style="margin-bottom:20px"><h2>${esc(g)}</h2><div class="list">${items.map(([t,s,u])=>`<a class="row" href="${u}" target="_blank" rel="noopener"><div class="txt"><b>${esc(t)}</b><p>${esc(s)}</p></div>${chev}</a>`).join('')}</div></div>`).join('');
-  store.set('ccs-role',role);
-  renderFeeds();
+function renderLinks(){
+  const seen=new Set();
+  const grp=(name,items)=>{items=items.filter(([,,u])=>!seen.has(u)&&seen.add(u));if(!items.length)return'';
+    return `<div style="margin-bottom:20px"><h2>${esc(name)}</h2><div class="list">${items.map(([t,s,u])=>`<a class="row" href="${esc(u)}" target="_blank" rel="noopener"><div class="txt"><b>${esc(t)}</b>${s?`<p>${esc(s)}</p>`:''}</div>${chev}</a>`).join('')}</div></div>`};
+  const docsBy=c=>DOCS.filter(d=>d.c===c).map(d=>[d.t,'',d.u]);
+  $('#links-groups').innerHTML=grp(...LINKS_TOP)+grp('Documents',docsBy('Documents'))+grp('School Forms',docsBy('School Forms'))+LINKS_BOTTOM.map(([n,i])=>grp(n,i)).join('');
 }
+function renderAll(){renderHome();renderCalendar();renderTrips();renderLinks()}
 
 function renderToday(){
   const now=new Date();
   $('#today-date').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  const day=now.getDay(), mins=now.getHours()*60+now.getMinutes();
-  const weekend=day===0||day===6;
-  const h=now.getHours();
+  const day=now.getDay(),mins=now.getHours()*60+now.getMinutes(),weekend=day===0||day===6,h=now.getHours();
   $('#today-head').textContent=h<12?'Good morning, Cougars':h<17?'Good afternoon, Cougars':'Good evening, Cougars';
   let s;
-  if(weekend) s='No school today · enjoy the weekend';
-  else if(mins<510) s='School starts at 8:30 AM';
-  else if(mins<780) s='Dismissal changes due by 1:00 PM';
-  else if(mins<840) s='Dismissal in '+fmt(900-mins);
-  else if(mins<900) s='No early check-outs until 3:00 PM';
-  else if(mins<1080) s='School day over · Extended care until 6:00 PM';
+  const t=localISO(),noSchool=EVENTS.find(e=>e.d===t&&/no school|closed/i.test(e.t));
+  if(weekend)s='No school today · enjoy the weekend';
+  else if(noSchool)s=noSchool.t;
+  else if(mins<510)s='School starts at 8:30 AM';
+  else if(mins<780)s='Dismissal changes due by 1:00 PM';
+  else if(mins<840)s='No early check-outs from 2:00 PM to 3:00 PM';
+  else if(mins<900)s='No early check-outs until 3:00 PM';
+  else if(mins<1080)s='School day over · Extended care until 6:00 PM';
   else s='See you tomorrow at 8:30 AM';
   $('#today-status').textContent=s;
-  const marks=[510,780,840,900];
-  let on=-1; if(!weekend) marks.forEach((m,i)=>{if(mins>=m)on=i});
+  let on=-1;if(!weekend&&!noSchool)[510,780,840,900].forEach((m,i)=>{if(mins>=m)on=i});
   document.querySelectorAll('.bell div').forEach((d,i)=>d.classList.toggle('on',i===on));
 }
-const fmt=m=>m>=60?Math.floor(m/60)+'h '+(m%60)+'m':m+'m';
 
+/* Live content */
+async function sbGet(path){const r=await fetch(SB_URL+'/rest/v1/'+path,{headers:{apikey:SB_KEY}});if(!r.ok)throw new Error(r.status);return r.json()}
+async function loadLive(){
+  try{
+    const t=localISO();
+    const [ann,ev,ft,docs,notes,runs]=await Promise.all([
+      sbGet('announcements?select=title,body,link,pinned,source,created_at&order=pinned.desc,source.asc,created_at.desc&limit=20'),
+      sbGet('events?select=title,event_date,time_label,location,starts_at&source=eq.google&event_date=gte.'+t+'&order=event_date.asc,starts_at.asc&limit=200'),
+      sbGet('field_trips?select=grade_group,group_order,trip_date,title,url,sort&order=group_order.asc,sort.asc'),
+      sbGet('documents?select=category,title,url,sort&order=sort.asc'),
+      sbGet('notifications?select=title,body,url,created_at&order=created_at.desc&limit=10'),
+      sbGet('field_trips?select=synced_at&limit=1')
+    ]);
+    NEWS=ann.map(a=>({t:a.title,d:a.body,u:a.link,pin:a.pinned}));
+    EVENTS=ev.map(e=>({d:e.event_date,t:e.title,tm:e.time_label,loc:e.location,s:e.starts_at}));
+    if(ft.length)TRIPS=ft.map(x=>({g:x.grade_group,d:x.trip_date,t:x.title,u:x.url}));
+    DOCS=docs.map(d=>({c:d.category,t:d.title,u:d.url}));
+    ALERTS=notes.map(n=>({t:n.title,b:n.body,u:n.url,at:n.created_at}));
+    if(runs[0])$('#synced').textContent='Updated from csjax.org '+new Date(runs[0].synced_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    renderAll();renderToday();
+    store.set('ccs-cache2',JSON.stringify({NEWS,EVENTS,TRIPS,DOCS,ALERTS}));
+  }catch(e){}
+}
+try{const c=JSON.parse(store.get('ccs-cache2')||'null');if(c){({NEWS,EVENTS,TRIPS,DOCS,ALERTS}=c)}}catch(_){}
+
+/* Navigation */
+const SCREENS=['home','calendar','trips','info','links','contact'];
 function go(name){
+  if(!SCREENS.includes(name))name='home';
   document.querySelectorAll('[data-screen]').forEach(s=>s.hidden=s.dataset.screen!==name);
   document.querySelectorAll('.tab').forEach(t=>{if(t.dataset.go===name)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
   window.scrollTo(0,0);
   store.set('ccs-tab',name);
 }
-
-function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,1800)}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2600)}
 
 document.addEventListener('click',e=>{
-  const g=e.target.closest('[data-go]'); if(g){e.preventDefault();go(g.dataset.go);return}
-  const r=e.target.closest('[data-role]'); if(r){renderRole(r.dataset.role);return}
+  const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return}
+  const gr=e.target.closest('[data-grade]');if(gr){GRADE=gr.dataset.grade;store.set('ccs-grade',GRADE);renderTrips();return}
   const c=e.target.closest('[data-copy]');
   if(c){const v=c.dataset.copy;
     (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>toast('Copied '+v)).catch(()=>{
-      const b=c.parentElement.querySelector('b');const sel=getSelection();const rg=document.createRange();rg.selectNodeContents(b);sel.removeAllRanges();sel.addRange(rg);toast('Selected – press copy')});}
+      const b=c.parentElement.querySelector('b');const sel=getSelection();const rg=document.createRange();rg.selectNodeContents(b);sel.removeAllRanges();sel.addRange(rg);toast('Selected – tap Copy')});}
 });
-$('#install-x').addEventListener('click',()=>{$('#install').hidden=true;store.set('ccs-install','hide')});
 
-const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+/* Install + push notifications */
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const pushSupported='serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
 if(!standalone&&store.get('ccs-install')!=='hide')$('#install').hidden=false;
+$('#install-x').addEventListener('click',()=>{$('#install').hidden=true;store.set('ccs-install','hide')});
 let deferredPrompt=null;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#install-btn').hidden=false});
 $('#install-btn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#install').hidden=true});
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 
-renderRole(store.get('ccs-role')==='staff'?'staff':'parent');
-renderToday(); setInterval(renderToday,30000);
-const lastTab=location.hash.slice(1)||store.get('ccs-tab');
-if(['calendar','info','links','contact'].includes(lastTab))go(lastTab);
+const b64u=s=>{const p='='.repeat((4-s.length%4)%4);const r=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
+async function saveSub(sub){
+  const j=sub.toJSON();
+  const r=await fetch(SB_URL+'/rest/v1/rpc/save_push_subscription',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_ua:navigator.userAgent})});
+  if(!r.ok)throw new Error('save '+r.status);
+}
+async function pushState(){
+  const card=$('#push-card'),on=$('#push-on');
+  card.hidden=true;on.hidden=true;
+  if(store.get('ccs-push-x')==='1'&&window.Notification?.permission!=='granted')return;
+  if(!pushSupported){
+    if(isIOS&&!standalone){card.hidden=false;$('#push-title').textContent='Get school alerts on your iPhone';$('#push-text').textContent='Add this app to your home screen first (Share → Add to Home Screen), then open it from the home screen to turn on notifications.';$('#push-btn').hidden=true}
+    return;
+  }
+  if(Notification.permission==='denied'){card.hidden=false;$('#push-title').textContent='Notifications are blocked';$('#push-text').textContent='To get school alerts, allow notifications for Cornerstone in your phone\'s Settings, then reopen the app.';$('#push-btn').hidden=true;return}
+  const reg=await navigator.serviceWorker.ready;
+  const sub=await reg.pushManager.getSubscription();
+  if(sub&&Notification.permission==='granted'){on.hidden=false;saveSub(sub).catch(()=>{});return}
+  card.hidden=false;$('#push-btn').hidden=false;
+}
+$('#push-btn').addEventListener('click',async()=>{
+  const btn=$('#push-btn');btn.disabled=true;
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){await pushState();return}
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUBLIC)});
+    await saveSub(sub);
+    toast('Notifications are on');
+  }catch(e){toast('Couldn\'t turn on notifications. Try again in a moment.')}
+  btn.disabled=false;pushState();
+});
+$('#push-x').addEventListener('click',()=>{$('#push-card').hidden=true;store.set('ccs-push-x','1')});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').then(()=>pushState()).catch(()=>{});
+  navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='push')loadLive()});
+}
+
+/* Boot */
+$('#quick').innerHTML=QUICK.map(q=>`<a class="qa" href="${q.u}" target="_blank" rel="noopener"><span class="ic">${ic(q.i)}</span><div><b>${esc(q.t)}</b><small>${esc(q.s)}</small></div></a>`).join('');
+renderAll();renderToday();setInterval(renderToday,30000);
+const start=location.hash.slice(1)||store.get('ccs-tab');
+if(SCREENS.includes(start))go(start);
 loadLive();
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadLive()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){loadLive();if(pushSupported)pushState()}});
 </script>
 </body>
 </html>
