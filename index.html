@@ -298,7 +298,7 @@ details[open] summary::after{content:"–"}
       <div class="body">
         <p>Breakfast and lunch are <b>free for every student</b> in 2026–27 through the federal Community Eligibility Provision. No application or payment needed.</p>
         <p class="muted">Wellness Policy questions: school@csjax.org. Free language help is available by calling the office.</p>
-        <a class="btn" href="https://www.schoolnutritionandfitness.com/?sid=1786582954026" target="_blank" rel="noopener">See this week's menu</a>
+        <a class="btn" href="https://www.schoolnutritionandfitness.com/?sid=1786582954026" target="_blank" rel="noopener">See breakfast and lunch menus</a>
       </div>
     </details>
 
@@ -369,7 +369,7 @@ const QUICK=[
   {t:'Report an absence',s:'Online absence form',u:'https://excused.csjax.org/',i:'check'},
   {t:'Change dismissal',s:'KidAccount, by 1:00 PM',u:'https://kidaccount.net/connect',i:'swap'},
   {t:'FACTS',s:'Grades & progress reports',u:'https://cs-fl.client.renweb.com/pwr/',i:'grad'},
-  {t:'Lunch menu',s:'Free meals for all',u:'https://www.schoolnutritionandfitness.com/?sid=1786582954026',i:'food'}
+  {t:'Breakfast and Lunch Menus',s:'',u:'https://www.schoolnutritionandfitness.com/?sid=1786582954026',i:'food'}
 ];
 const LINKS_TOP=['Everyday',[
   ['FACTS','Grades & progress reports','https://cs-fl.client.renweb.com/pwr/'],
@@ -377,7 +377,7 @@ const LINKS_TOP=['Everyday',[
   ['KidAccount','Dismissal changes & absences','https://kidaccount.net/connect'],
   ['KidAccount Instructions','How to set up the app','https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf'],
   ['Clever Login','Student learning apps','https://clever.com/in/csjax'],
-  ['Lunch Menu','School Nutrition & Fitness','https://www.schoolnutritionandfitness.com/?sid=1786582954026']]];
+  ['Breakfast and Lunch Menus','School Nutrition & Fitness','https://www.schoolnutritionandfitness.com/?sid=1786582954026']]];
 const LINKS_BOTTOM=[
   ['More Forms',[
     ['Request Student Records','Records request form','https://csjax.jotform.com/262805791895069'],
@@ -603,7 +603,7 @@ if('serviceWorker' in navigator){
 }
 
 /* Boot */
-$('#quick').innerHTML=QUICK.map(q=>`<a class="qa" href="${q.u}" target="_blank" rel="noopener"><span class="ic">${ic(q.i)}</span><div><b>${esc(q.t)}</b><small>${esc(q.s)}</small></div></a>`).join('');
+$('#quick').innerHTML=QUICK.map(q=>`<a class="qa" href="${q.u}" target="_blank" rel="noopener"><span class="ic">${ic(q.i)}</span><div><b>${esc(q.t)}</b>${q.s?`<small>${esc(q.s)}</small>`:''}</div></a>`).join('');
 renderAll();renderToday();setInterval(renderToday,30000);
 const start=location.hash.slice(1)||store.get('ccs-tab');
 if(SCREENS.includes(start))go(start);
