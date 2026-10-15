@@ -446,7 +446,7 @@ function renderTrips(){
   const t=localISO();
   const list=TRIPS.filter(x=>x.g===GRADE).sort((a,b)=>(a.d||'').localeCompare(b.d||''));
   const rows=list.map(x=>{const d=x.d?dt(x.d):null;const past=x.d&&x.d<t;
-    return `<div class="row${past?' past':''}">${d?`<div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div>`:''}<div class="txt"><b>${esc(x.t)}</b><p>${d?d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):''}${past?' · Trip date has passed':''}</p><a class="slip" href="${esc(x.u)}" target="_blank" rel="noopener">${/chaperone/i.test(x.t)?'Sign up':'Sign permission slip'}</a></div></div>`}).join('');
+    return `<div class="row${past?' past':''}">${d?`<div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div>`:''}<div class="txt"><b>${esc(x.t)}</b><p>${d?d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):''}${past?' · Trip date has passed':''}</p><a class="slip" href="${esc(x.u)}" target="_blank" rel="noopener">Click to Complete Permission Slip</a></div></div>`}).join('');
   $('#trip-list').innerHTML=(GRADE?`<div class="monthhead">${esc(GRADE)}</div>`:'')+(rows||'<p class="empty">No field trips posted for this grade level yet.</p>');
 }
 function renderLinks(){
