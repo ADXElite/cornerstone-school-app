@@ -326,13 +326,12 @@ details[open] summary::after{content:"–"}
   <div><h1>Contact</h1><p class="muted">Front Office · Cornerstone Christian School</p></div>
   <div class="contact">
     <div class="cline"><div class="txt"><small>Phone</small><b>(904) 730-5500</b></div><a class="copy" href="tel:+19047305500">Call</a><button class="copy" data-copy="(904) 730-5500">Copy</button></div>
-    <div class="cline"><div class="txt"><small>Email</small><b>info@csjax.org</b></div><button class="copy" data-copy="info@csjax.org">Copy</button></div>
+    <div class="cline"><div class="txt"><small>Email</small><b>office@csjax.org</b></div><button class="copy" data-copy="office@csjax.org">Copy</button></div>
     <div class="cline"><div class="txt"><small>Fax</small><b>(904) 730-5502</b></div><button class="copy" data-copy="(904) 730-5502">Copy</button></div>
     <div class="cline"><div class="txt"><small>Address</small><b>9039 Beach Blvd., Jacksonville, FL 32216</b></div><a class="copy" href="https://maps.google.com/?q=9039+Beach+Blvd+Jacksonville+FL+32216" target="_blank" rel="noopener">Map</a></div>
   </div>
   <div class="btns">
-    <a class="btn" href="https://www.facebook.com/csjax" target="_blank" rel="noopener">Facebook</a>
-    <a class="btn ghost" href="https://www.csjax.org" target="_blank" rel="noopener">csjax.org</a>
+    <a class="btn" href="https://www.csjax.org" target="_blank" rel="noopener">csjax.org</a>
     <a class="btn ghost" href="https://www.csjax.org/about-us/faculty-staff.cfm" target="_blank" rel="noopener">Faculty &amp; Staff</a>
   </div>
   <p class="foot">Kindergarten through 12th Grade · Educating Jacksonville's youth since 2002</p>
@@ -382,11 +381,10 @@ const LINKS_BOTTOM=[
   ['More Forms',[
     ['Request Student Records','Records request form','https://csjax.jotform.com/262805791895069'],
     ['Morning Extended Care','Application','https://csjax.jotform.com/260494712128053'],
-    ['Afternoon Extended Care','Self-pay application','https://csjax.jotform.com/261116384043955']]],
-  ['Staff',[
-    ['BambooHR','Time off, pay stubs, profile','https://csjax.bamboohr.com/'],
-    ['Faculty & Staff Directory','csjax.org','https://www.csjax.org/about-us/faculty-staff.cfm']]]
+    ['Afternoon Extended Care','Self-pay application','https://csjax.jotform.com/261116384043955']]]
 ];
+// Website documents/forms the app should never show
+const HIDE_DOCS=[/student\s*id\s*number/i,/261055782295059/];
 
 /* Built-in copy (used until live data loads, and offline) */
 let NEWS=[{t:'Dismissal Updates',d:'Cornerstone School has partnered with KidAccount to assist with Afternoon Student Dismissal.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
@@ -453,7 +451,7 @@ function renderLinks(){
   const seen=new Set();
   const grp=(name,items)=>{items=items.filter(([,,u])=>!seen.has(u)&&seen.add(u));if(!items.length)return'';
     return `<div style="margin-bottom:20px"><h2>${esc(name)}</h2><div class="list">${items.map(([t,s,u])=>`<a class="row" href="${esc(u)}" target="_blank" rel="noopener"><div class="txt"><b>${esc(t)}</b>${s?`<p>${esc(s)}</p>`:''}</div>${chev}</a>`).join('')}</div></div>`};
-  const docsBy=c=>DOCS.filter(d=>d.c===c).map(d=>[d.t,'',d.u]);
+  const docsBy=c=>DOCS.filter(d=>d.c===c&&!HIDE_DOCS.some(r=>r.test(d.t)||r.test(d.u))).map(d=>[d.t,'',d.u]);
   $('#links-groups').innerHTML=grp(...LINKS_TOP)+grp('Documents',docsBy('Documents'))+grp('School Forms',docsBy('School Forms'))+LINKS_BOTTOM.map(([n,i])=>grp(n,i)).join('');
 }
 function renderAll(){renderHome();renderCalendar();renderTrips();renderLinks()}
