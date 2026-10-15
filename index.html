@@ -80,6 +80,22 @@ p{margin:0}
 .quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .qa{display:flex;gap:12px;align-items:center;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;min-width:0}
 .qa:active{transform:scale(.98)}
+.qa.wide{grid-column:1/-1;border-color:var(--red)}
+.welcome{position:fixed;inset:0;z-index:30;background:rgba(10,9,9,.62);display:flex;align-items:flex-end;justify-content:center}
+.welcome-in{background:var(--surface);color:var(--ink);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:22px max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:grid;gap:16px}
+@media (min-width:600px){.welcome{align-items:center}.welcome-in{border-radius:22px}}
+.welcome-icon{width:72px;height:72px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.welcome h2.w-title{font-family:var(--display);font-weight:800;font-size:1.9rem;line-height:1.05;text-transform:uppercase;letter-spacing:.01em;color:var(--ink);margin:0;text-wrap:balance}
+.w-steps{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:s}
+.w-steps li{display:flex;gap:12px;align-items:flex-start;counter-increment:s;font-size:1rem}
+.w-steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;display:grid;place-items:center;font-size:.9rem}
+.w-steps svg{width:18px;height:18px;vertical-align:-3px}
+.w-perks{display:flex;flex-wrap:wrap;gap:6px}
+.w-perks span{background:var(--chip);color:var(--chip-ink);border-radius:999px;padding:4px 10px;font-weight:700;font-size:.8rem}
+.w-actions{display:grid;gap:8px}
+.w-actions .btn{justify-self:stretch;justify-content:center;padding:13px 16px;font-size:1.02rem}
+.w-later{background:none;border:0;color:var(--muted);font-weight:600;padding:8px;cursor:pointer}
+@media (prefers-reduced-motion:no-preference){.welcome:not([hidden]) .welcome-in{animation:up .25s ease-out}}
 .qa .ic{width:38px;height:38px;border-radius:10px;background:var(--chip);color:var(--chip-ink);display:grid;place-items:center;flex:none}
 .qa .ic svg{width:20px;height:20px}
 .qa b{display:block;font-weight:700;font-size:.95rem;line-height:1.2}
@@ -364,6 +380,19 @@ button.row:active{background:var(--bg)}
     <button class="tab" data-go="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Contact</button>
   </div>
 </nav>
+<div class="welcome" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="w-title">
+  <div class="welcome-in">
+    <img class="welcome-icon" src="/icons/icon-192.png" alt="" width="72" height="72">
+    <h2 class="w-title" id="w-title">Install the Cornerstone app</h2>
+    <p id="w-text">Add Cornerstone to your home screen so you can get school alerts on this phone.</p>
+    <div class="w-perks" id="w-perks"><span>Closing &amp; early dismissal alerts</span><span>School calendar</span><span>Field trip forms</span></div>
+    <ol class="w-steps" id="w-steps"></ol>
+    <div class="w-actions">
+      <button class="btn" id="w-primary" hidden>Install the app</button>
+      <button class="w-later" id="w-later">Not now</button>
+    </div>
+  </div>
+</div>
 <div class="sheet" id="ev-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="ev-title">
   <div class="sheet-in">
     <div class="sheet-grab" aria-hidden="true"></div>
@@ -384,10 +413,12 @@ const ICON={
   check:'<path d="M5 12l5 5 9-10"/>',
   swap:'<path d="M4 8h14l-3-3M20 16H6l3 3"/>',
   food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 7h3v11"/>',
-  grad:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>'
+  grad:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+  user:'<circle cx="10" cy="8" r="4"/><path d="M3 21c0-4 3-6 7-6 1.5 0 2.8.3 3.9.8"/><path d="M15 20l1-3 4.5-4.5a1.4 1.4 0 0 1 2 2L18 19l-3 1z"/>'
 };
 const ic=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
 const QUICK=[
+  {t:'Update My Information',s:'Keep your family\'s contact details current',u:'https://csjax.jotform.com/262874930975069',i:'user',wide:true},
   {t:'Report an absence',s:'Online absence form',u:'https://excused.csjax.org/',i:'check'},
   {t:'Change dismissal',s:'KidAccount, by 1:00 PM',u:'https://kidaccount.net/connect',i:'swap'},
   {t:'FACTS',s:'Grades & progress reports',u:'https://cs-fl.client.renweb.com/pwr/',i:'grad'},
@@ -612,7 +643,8 @@ const pushSupported='serviceWorker' in navigator&&'PushManager' in window&&'Noti
 if(!standalone&&store.get('ccs-install')!=='hide')$('#install').hidden=false;
 $('#install-x').addEventListener('click',()=>{$('#install').hidden=true;store.set('ccs-install','hide')});
 let deferredPrompt=null;
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#install-btn').hidden=false});
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#install-btn').hidden=false;if(!$('#welcome').hidden&&welcomeMode==='install')renderWelcome('install')});
+addEventListener('appinstalled',()=>{$('#welcome').hidden=true;$('#install').hidden=true;store.set('ccs-welcome','installed')});
 $('#install-btn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#install').hidden=true});
 
 const b64u=s=>{const p='='.repeat((4-s.length%4)%4);const r=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
@@ -626,6 +658,7 @@ async function pushState(){
   const card=$('#push-card'),on=$('#push-on');
   card.hidden=true;on.hidden=true;
   if(store.get('ccs-push-x')==='1'&&window.Notification?.permission!=='granted')return;
+  if(!standalone&&(isIOS||isAndroid))return; // phones: install first (install card + first-run prompt cover this)
   if(!pushSupported){
     if(isIOS&&!standalone){card.hidden=false;$('#push-title').textContent='Get school alerts on your iPhone';$('#push-text').textContent='Add this app to your home screen first (Share → Add to Home Screen), then open it from the home screen to turn on notifications.';$('#push-btn').hidden=true}
     return;
@@ -636,28 +669,90 @@ async function pushState(){
   if(sub&&Notification.permission==='granted'){on.hidden=false;saveSub(sub).catch(()=>{});return}
   card.hidden=false;$('#push-btn').hidden=false;
 }
-$('#push-btn').addEventListener('click',async()=>{
-  const btn=$('#push-btn');btn.disabled=true;
+async function enablePush(btn){
+  btn.disabled=true;let ok=false;
   try{
     const perm=await Notification.requestPermission();
     if(perm!=='granted'){await pushState();return}
     const reg=await navigator.serviceWorker.ready;
     let sub=await reg.pushManager.getSubscription();
     if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUBLIC)});
-    await saveSub(sub);
+    await saveSub(sub);ok=true;
     toast('Notifications are on');
   }catch(e){toast('Couldn\'t turn on notifications. Try again in a moment.')}
-  btn.disabled=false;pushState();
-});
+  btn.disabled=false;pushState();return ok;
+}
+$('#push-btn').addEventListener('click',()=>enablePush($('#push-btn')));
 $('#push-x').addEventListener('click',()=>{$('#push-card').hidden=true;store.set('ccs-push-x','1')});
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js').then(()=>pushState()).catch(()=>{});
+  navigator.serviceWorker.register('/sw.js').then(()=>{pushState();maybeWelcome()}).catch(()=>maybeWelcome());
   navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='push')loadLive()});
 }
 
+
+/* First-run prompt: install the app, then (once installed) turn on alerts */
+const SHARE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+const DOTS_ICON='<svg viewBox="0 0 24 24" fill="currentColor" aria-label="menu"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
+let welcomeMode=null;
+function renderWelcome(mode){
+  welcomeMode=mode;
+  const steps=$('#w-steps'),btn=$('#w-primary');
+  btn.hidden=true;steps.hidden=false;$('#w-perks').hidden=false;
+  if(mode==='install'){
+    $('#w-title').textContent='Install the Cornerstone app';
+    $('#w-text').textContent='Add Cornerstone to your home screen to sign up this phone for school alerts.';
+    if(deferredPrompt){
+      steps.hidden=true;btn.hidden=false;btn.textContent='Install the app';
+    }else if(isIOS){
+      steps.innerHTML=`<li><span>Tap the <b>Share</b> button ${SHARE_ICON} ${/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent)?'next to the address bar':'at the bottom of Safari'}.</span></li><li><span>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</span></li><li><span>Open <b>Cornerstone</b> from your home screen and tap <b>Turn on notifications</b>.</span></li>`;
+    }else if(isAndroid){
+      steps.innerHTML=`<li><span>Tap the menu ${DOTS_ICON} in the top corner of your browser.</span></li><li><span>Tap <b>Install app</b> or <b>Add to Home screen</b>.</span></li><li><span>Open <b>Cornerstone</b> from your home screen and tap <b>Turn on notifications</b>.</span></li>`;
+    }else{
+      steps.innerHTML=`<li><span>On your phone, open <b>app.csjax.org</b>.</span></li><li><span>Follow the prompt to add it to your home screen.</span></li><li><span>Open it and tap <b>Turn on notifications</b>.</span></li>`;
+    }
+    $('#w-later').textContent='Not now';
+  }else{
+    $('#w-title').textContent='Turn on school alerts';
+    $('#w-text').textContent='Get closings, early dismissals and important reminders from Cornerstone right on this phone.';
+    steps.hidden=true;$('#w-perks').hidden=true;
+    btn.hidden=false;btn.textContent='Turn on notifications';
+    $('#w-later').textContent='Not now';
+  }
+  $('#welcome').hidden=false;
+}
+function closeWelcome(){$('#welcome').hidden=true}
+$('#w-primary').addEventListener('click',async()=>{
+  if(welcomeMode==='install'){
+    if(!deferredPrompt)return;
+    deferredPrompt.prompt();const r=await deferredPrompt.userChoice;deferredPrompt=null;
+    if(r.outcome==='accepted'){store.set('ccs-welcome','installed');closeWelcome()}else renderWelcome('install');
+  }else{
+    const ok=await enablePush($('#w-primary'));
+    store.set('ccs-alerts-prompt','done');
+    if(ok||window.Notification?.permission!=='default')closeWelcome();
+  }
+});
+$('#w-later').addEventListener('click',()=>{
+  if(welcomeMode==='install')store.set('ccs-welcome','later:'+Date.now());
+  else store.set('ccs-alerts-prompt','later:'+Date.now());
+  closeWelcome();
+});
+const dueAgain=v=>!v||(v.startsWith('later:')&&Date.now()-Number(v.slice(6))>7*864e5);
+async function maybeWelcome(){
+  if(!standalone){
+    if(dueAgain(store.get('ccs-welcome')))renderWelcome('install');
+    return;
+  }
+  if(!pushSupported||Notification.permission!=='default')return;
+  try{const reg=await navigator.serviceWorker.ready;if(await reg.pushManager.getSubscription())return}catch(_){}
+  const v=store.get('ccs-alerts-prompt');
+  if(v!=='done'&&dueAgain(v))renderWelcome('alerts');
+}
+if(!('serviceWorker' in navigator))maybeWelcome();
+
 /* Boot */
-$('#quick').innerHTML=QUICK.map(q=>`<a class="qa" href="${q.u}" target="_blank" rel="noopener"><span class="ic">${ic(q.i)}</span><div><b>${esc(q.t)}</b>${q.s?`<small>${esc(q.s)}</small>`:''}</div></a>`).join('');
+$('#quick').innerHTML=QUICK.map(q=>`<a class="qa${q.wide?' wide':''}" href="${q.u}" target="_blank" rel="noopener"><span class="ic">${ic(q.i)}</span><div><b>${esc(q.t)}</b>${q.s?`<small>${esc(q.s)}</small>`:''}</div></a>`).join('');
 renderAll();renderToday();setInterval(renderToday,30000);
 const start=location.hash.slice(1)||store.get('ccs-tab');
 if(SCREENS.includes(start))go(start);
