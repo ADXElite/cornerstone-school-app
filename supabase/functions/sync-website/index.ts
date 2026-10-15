@@ -86,6 +86,14 @@ function parseICS(ics: string) {
   return evs;
 }
 const icsText = (s = "") => s.replace(/\\n/gi, " ").replace(/\\([,;\\])/g, "$1").trim();
+// Event description: keep line breaks, turn Google's HTML into plain text
+function icsDesc(s = "") {
+  let t = s.replace(/\\n/gi, "\n").replace(/\\([,;\\])/g, "$1");
+  t = t.replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|li)>/gi, "\n").replace(/<li[^>]*>/gi, "• ");
+  t = t.replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_m, h, x) => { const tx = x.replace(/<[^>]*>/g, "").trim(); return tx && tx !== h ? `${tx} (${h})` : h; });
+  t = decode(t.replace(/<[^>]*>/g, ""));
+  return t.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 4000) || null;
+}
 const nyParts = (d: Date) => Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(d).map((p) => [p.type, p.value]));
 function nyDate(d: Date) { const p = nyParts(d); return `${p.year}-${p.month}-${p.day}`; }
 function nyTime(d: Date) { const p = nyParts(d); return `${p.hour}:${p.minute} ${p.dayPeriod}`; }
@@ -184,7 +192,8 @@ async function syncCalendar() {
         rows.push({
           source: "google", uid: ev.UID || null, title: icsText(ev.SUMMARY) || "School event",
           event_date, time_label, location: icsText(ev.LOCATION) || null,
-          all_day: o.allDay, starts_at: o.start.toISOString(), grades: null, audience: "all",
+          all_day: o.allDay, starts_at: o.start.toISOString(), ends_at: o.end ? o.end.toISOString() : null,
+          description: icsDesc(ev.DESCRIPTION), grades: null, audience: "all",
         });
       }
     } catch (_) { /* skip malformed event */ }

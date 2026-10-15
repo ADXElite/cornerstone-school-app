@@ -147,6 +147,22 @@ details[open] summary::after{content:"–"}
 .tab svg{width:22px;height:22px}
 .tab[aria-current="page"]{color:var(--red)}
 .tab[aria-current="page"]::before{content:"";position:absolute;top:0;left:24%;right:24%;height:3px;border-radius:0 0 3px 3px;background:var(--red)}
+button.row{width:100%;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;font:inherit;color:inherit}
+button.row:first-child{border-top:0}
+button.row:active{background:var(--bg)}
+.hasdesc{color:var(--red)!important;font-weight:600;font-size:.82rem!important}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet-in{background:var(--surface);color:var(--ink);width:100%;max-width:640px;max-height:85vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:10px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:grid;gap:14px}
+.sheet-grab{width:44px;height:5px;border-radius:3px;background:var(--line);justify-self:center}
+.sheet-head{display:flex;gap:14px;align-items:flex-start}
+.sheet-head .txt{flex:1;min-width:0}
+.sheet-title{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1;text-transform:none;letter-spacing:0;color:var(--ink);margin:0 0 4px;text-wrap:balance}
+.ev-loc{font-weight:600}
+.ev-loc a{color:var(--red)}
+.ev-desc{white-space:pre-line;overflow-wrap:anywhere;font-size:1rem;line-height:1.55}
+.ev-desc a{color:var(--red);font-weight:600}
+.ev-desc.none{color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.sheet:not([hidden]) .sheet-in{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px)}to{transform:none}}}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-weight:600;font-size:.9rem;z-index:9;max-width:calc(100% - 32px)}
 .foot{text-align:center;font-size:.78rem;color:var(--muted)}
 @media (max-width:370px){.quick{grid-template-columns:1fr}.tab{font-size:.62rem}.bell{grid-template-columns:1fr 1fr}}
@@ -236,7 +252,7 @@ details[open] summary::after{content:"–"}
 <section class="screen" data-screen="info" hidden>
   <div><h1>School Info</h1><p class="muted">Everyday procedures, in one place.</p></div>
   <div>
-    <details open>
+    <details>
       <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13l2-6h14l2 6v5H3z"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/></svg></span>Arrival, Dismissal &amp; Pickup</summary>
       <div class="body">
         <dl class="facts">
@@ -348,6 +364,15 @@ details[open] summary::after{content:"–"}
     <button class="tab" data-go="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Contact</button>
   </div>
 </nav>
+<div class="sheet" id="ev-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="ev-title">
+  <div class="sheet-in">
+    <div class="sheet-grab" aria-hidden="true"></div>
+    <div class="sheet-head"><div class="cal" id="ev-cal"></div><div class="txt"><h2 class="sheet-title" id="ev-title"></h2><p class="muted" id="ev-when"></p></div><button class="x" data-close aria-label="Close">×</button></div>
+    <p id="ev-loc" class="ev-loc" hidden></p>
+    <div id="ev-desc" class="ev-desc"></div>
+    <div class="btns"><a class="btn" id="ev-add" target="_blank" rel="noopener">Add to my calendar</a><button class="btn ghost" data-close>Close</button></div>
+  </div>
+</div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -411,10 +436,12 @@ const chev='<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="n
 const localISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const dt=s=>new Date(s+'T12:00:00');
 
+const norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const evKey=e=>`${e.d}|${e.s||''}|${e.t}`;
 function evRow(e){
   const d=dt(e.d);
   const wd=d.toLocaleDateString('en-US',{weekday:'long'});
-  return `<div class="row"><div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div><div class="txt"><b>${esc(e.t)}</b><p>${wd}${e.tm?' · '+esc(e.tm):''}${e.loc?' · '+esc(e.loc):''}</p></div></div>`;
+  return `<button type="button" class="row evrow" data-ev="${esc(evKey(e))}" aria-label="${esc(e.t)}, details"><div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div><div class="txt"><b>${esc(e.t)}</b><p>${wd}${e.tm?' · '+esc(e.tm):''}${e.loc?' · '+esc(e.loc):''}</p>${e.desc?'<p class="hasdesc">Tap for details</p>':''}</div>${chev}</button>`;
 }
 const upcoming=()=>{const t=localISO();return EVENTS.filter(e=>e.d>=t).sort((a,b)=>a.d.localeCompare(b.d)||(a.s||'').localeCompare(b.s||''))};
 
@@ -481,14 +508,14 @@ async function loadLive(){
     const t=localISO();
     const [ann,ev,ft,docs,notes,runs]=await Promise.all([
       sbGet('announcements?select=title,body,link,pinned,source,created_at&order=pinned.desc,source.asc,created_at.desc&limit=20'),
-      sbGet('events?select=title,event_date,time_label,location,starts_at&source=eq.google&event_date=gte.'+t+'&order=event_date.asc,starts_at.asc&limit=200'),
+      sbGet('events?select=title,event_date,time_label,location,starts_at,ends_at,all_day,description&source=eq.google&event_date=gte.'+t+'&order=event_date.asc,starts_at.asc&limit=200'),
       sbGet('field_trips?select=grade_group,group_order,trip_date,title,url,sort&order=group_order.asc,sort.asc'),
       sbGet('documents?select=category,title,url,sort&order=sort.asc'),
       sbGet('notifications?select=title,body,url,created_at&order=created_at.desc&limit=10'),
       sbGet('field_trips?select=synced_at&limit=1')
     ]);
     NEWS=ann.map(a=>({t:a.title,d:a.body,u:a.link,pin:a.pinned}));
-    EVENTS=ev.map(e=>({d:e.event_date,t:e.title,tm:e.time_label,loc:e.location,s:e.starts_at}));
+    EVENTS=ev.map(e=>({d:e.event_date,t:e.title,tm:e.time_label,loc:e.location,s:e.starts_at,en:e.ends_at,ad:e.all_day,desc:(e.description&&norm(e.description)!==norm(e.title))?e.description:null}));
     if(ft.length)TRIPS=ft.map(x=>({g:x.grade_group,d:x.trip_date,t:x.title,u:x.url}));
     DOCS=docs.map(d=>({c:d.category,t:d.title,u:d.url}));
     ALERTS=notes.map(n=>({t:n.title,b:n.body,u:n.url,at:n.created_at}));
@@ -498,6 +525,35 @@ async function loadLive(){
   }catch(e){}
 }
 try{const c=JSON.parse(store.get('ccs-cache2')||'null');if(c){({NEWS,EVENTS,TRIPS,DOCS,ALERTS}=c)}}catch(_){}
+
+/* Event details */
+function linkify(t){
+  return esc(t).replace(/(https?:\/\/[^\s)<]+)/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u.length>48?u.slice(0,45)+'…':u}</a>`);
+}
+const gcalDate=(iso,allDay)=>{const d=new Date(iso);return allDay?d.toISOString().slice(0,10).replace(/-/g,''):d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'')};
+let lastFocus=null;
+function openEvent(key){
+  const e=EVENTS.find(x=>evKey(x)===key);if(!e)return;
+  const d=dt(e.d);
+  $('#ev-cal').innerHTML=`<i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b>`;
+  $('#ev-title').textContent=e.t;
+  $('#ev-when').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+(e.tm?' · '+e.tm:(e.ad!==false?' · All day':''));
+  const loc=$('#ev-loc');
+  if(e.loc){loc.hidden=false;loc.innerHTML=`Location: <a href="https://maps.google.com/?q=${encodeURIComponent(e.loc)}" target="_blank" rel="noopener">${esc(e.loc)}</a>`}else loc.hidden=true;
+  const desc=$('#ev-desc');
+  if(e.desc){desc.className='ev-desc';desc.innerHTML=linkify(e.desc)}else{desc.className='ev-desc none';desc.textContent='No additional details were posted for this event.'}
+  let dates;
+  if(e.s){const allDay=e.ad!==false;const st=allDay?new Date(e.d+'T12:00:00Z').toISOString():e.s;
+    const en=e.en||(allDay?new Date(new Date(e.d+'T12:00:00Z').getTime()+864e5).toISOString():new Date(new Date(e.s).getTime()+36e5).toISOString());
+    dates=gcalDate(st,allDay)+'/'+gcalDate(en,allDay)}
+  else dates=e.d.replace(/-/g,'')+'/'+new Date(new Date(e.d+'T12:00:00Z').getTime()+864e5).toISOString().slice(0,10).replace(/-/g,'');
+  $('#ev-add').href='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(e.t)+'&dates='+dates+(e.desc?'&details='+encodeURIComponent(e.desc.slice(0,1500)):'')+(e.loc?'&location='+encodeURIComponent(e.loc):'')+'&ctz=America/New_York';
+  lastFocus=document.activeElement;
+  $('#ev-sheet').hidden=false;document.body.style.overflow='hidden';
+  $('#ev-sheet .x').focus();
+}
+function closeEvent(){if($('#ev-sheet').hidden)return;$('#ev-sheet').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeEvent()});
 
 /* Navigation */
 const SCREENS=['home','calendar','trips','info','links','contact'];
@@ -512,6 +568,8 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTi
 
 document.addEventListener('click',e=>{
   const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return}
+  const ev=e.target.closest('[data-ev]');if(ev){openEvent(ev.dataset.ev);return}
+  if(e.target.closest('[data-close]')||e.target.id==='ev-sheet'){closeEvent();return}
   const gr=e.target.closest('[data-grade]');if(gr){GRADE=gr.dataset.grade;store.set('ccs-grade',GRADE);renderTrips();return}
   const c=e.target.closest('[data-copy]');
   if(c){const v=c.dataset.copy;
