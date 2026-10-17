@@ -253,8 +253,6 @@ button.row:active{background:var(--bg)}
     <div class="cline"><div class="txt"><small>Fax</small><b>(904) 730-5502</b></div><button class="copy" data-copy="(904) 730-5502">Copy</button></div>
     <div class="cline"><div class="txt"><small>Address</small><b>9039 Beach Blvd., Jacksonville, FL 32216</b></div><a class="copy" href="https://maps.google.com/?q=9039+Beach+Blvd+Jacksonville+FL+32216" target="_blank" rel="noopener">Map</a></div>
   </div>
-  <div class="btns">
-    <a class="btn" href="https://www.csjax.org" target="_blank" rel="noopener">csjax.org</a>  </div>
   <p class="foot">Kindergarten through 12th Grade · Educating Jacksonville's youth since 2002</p>
   <p class="foot" id="synced"></p>
   </div>
@@ -451,7 +449,7 @@ const LINKS_BOTTOM=[
     ['Afternoon Extended Care','Self-pay application','https://csjax.jotform.com/261116384043955']]]
 ];
 // Website documents/forms the app should never show
-const HIDE_DOCS=[/student\s*id\s*number/i,/261055782295059/];
+const HIDE_DOCS=[/student\s*id\s*number/i,/261055782295059/,/bus\s*route/i];
 
 /* Built-in copy (used until live data loads, and offline) */
 let NEWS=[{t:'Dismissal Updates',d:'Cornerstone School has partnered with KidAccount to assist with Afternoon Student Dismissal.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
