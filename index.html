@@ -609,35 +609,9 @@ document.addEventListener('click',e=>{
       const b=c.parentElement.querySelector('b');const sel=getSelection();const rg=document.createRange();rg.selectNodeContents(b);sel.removeAllRanges();sel.addRange(rg);toast('Selected – tap Copy')});}
 });
 
-/* Installed app: open outside links in the phone's default browser instead of an in-app window */
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const isAndroid=/android/i.test(navigator.userAgent);
-function openInBrowser(url){
-  const u=new URL(url,location.href);
-  if(isAndroid){
-    // Android intent: hands the link to the default browser app; falls back to a normal tab.
-    location.href=`intent://${u.host}${u.pathname}${u.search}${u.hash}#Intent;scheme=${u.protocol.replace(':','')};action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=${encodeURIComponent(u.href)};end`;
-    return;
-  }
-  if(isIOS){
-    // iOS: x-safari-https:// opens Safari directly. If Safari doesn't take over within a moment, use a normal link.
-    let left=false;const onHide=()=>{if(document.hidden)left=true};
-    document.addEventListener('visibilitychange',onHide);
-    location.href=u.href.replace(/^https?:\/\//i,m=>'x-safari-'+m);
-    setTimeout(()=>{document.removeEventListener('visibilitychange',onHide);if(!left)window.open(u.href,'_blank','noopener')},900);
-    return;
-  }
-  window.open(u.href,'_blank','noopener');
-}
-if(standalone){
-  document.addEventListener('click',e=>{
-    const a=e.target.closest('a[href]');if(!a||e.defaultPrevented)return;
-    let u;try{u=new URL(a.getAttribute('href'),location.href)}catch(_){return}
-    if(!/^https?:$/.test(u.protocol)||u.origin===location.origin)return;
-    e.preventDefault();openInBrowser(u.href);
-  });
-}
 
 /* Install + push notifications */
 const pushSupported='serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
