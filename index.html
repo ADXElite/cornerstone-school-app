@@ -523,21 +523,45 @@ function renderLinks(){
 }
 function renderAll(){renderHome();renderCalendar();renderTrips();renderLinks()}
 
+/* School-day logic: weekends and "No School"/"Closed" calendar days (multi-day breaks included) */
+const isoOf=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const OFF_RX=/no school|closed/i;
+function offEvent(iso){
+  return EVENTS.find(e=>{
+    if(!OFF_RX.test(e.t||''))return false;
+    const start=e.d,end=e.en?String(e.en).slice(0,10):null; // all-day end date is exclusive
+    return end&&end>start?(iso>=start&&iso<end):iso===start;
+  });
+}
+function isSchoolDay(d){const w=d.getDay();return w!==0&&w!==6&&!offEvent(isoOf(d))}
+function nextSchoolDay(from){
+  const d=new Date(from.getFullYear(),from.getMonth(),from.getDate());
+  for(let i=1;i<=120;i++){d.setDate(d.getDate()+1);if(isSchoolDay(d))return{d:new Date(d),gap:i}}
+  return null;
+}
+function backLabel(n){
+  if(!n)return null;
+  if(n.gap===1)return 'tomorrow';
+  if(n.gap<7)return n.d.toLocaleDateString('en-US',{weekday:'long'});
+  return n.d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
 function renderToday(){
   const now=new Date();
   $('#today-date').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const day=now.getDay(),mins=now.getHours()*60+now.getMinutes(),weekend=day===0||day===6,h=now.getHours();
   $('#today-head').textContent=h<12?'Good morning, Cougars':h<17?'Good afternoon, Cougars':'Good evening, Cougars';
+  const noSchool=weekend?null:offEvent(isoOf(now));
+  const next=nextSchoolDay(now),when=backLabel(next);
+  const seeYou=when?`See you ${when} at 8:30 AM`:'Enjoy your time off';
   let s;
-  const t=localISO(),noSchool=EVENTS.find(e=>e.d===t&&/no school|closed/i.test(e.t));
-  if(weekend)s='No school today · enjoy the weekend';
-  else if(noSchool)s=noSchool.t;
+  if(weekend)s='No school today · '+seeYou;
+  else if(noSchool)s=noSchool.t+' · '+(when?`Back ${when} at 8:30 AM`:'Enjoy your time off');
   else if(mins<510)s='School starts at 8:30 AM';
   else if(mins<780)s='Dismissal changes due by 1:00 PM';
   else if(mins<840)s='No early check-outs from 2:00 PM to 3:00 PM';
   else if(mins<900)s='No early check-outs until 3:00 PM';
   else if(mins<1080)s='School day over · Extended care until 6:00 PM';
-  else s='See you tomorrow at 8:30 AM';
+  else s=seeYou;
   $('#today-status').textContent=s;
   let on=-1;if(!weekend&&!noSchool)[510,780,840,900].forEach((m,i)=>{if(mins>=m)on=i});
   document.querySelectorAll('.bell div').forEach((d,i)=>d.classList.toggle('on',i===on));
@@ -550,7 +574,7 @@ async function loadLive(){
     const t=localISO();
     const [ann,ev,ft,docs,notes,runs]=await Promise.all([
       sbGet('announcements?select=title,body,link,pinned,source,created_at&order=pinned.desc,source.asc,created_at.desc&limit=20'),
-      sbGet('events?select=title,event_date,time_label,location,starts_at,ends_at,all_day,description&source=eq.google&event_date=gte.'+t+'&order=event_date.asc,starts_at.asc&limit=200'),
+      sbGet('events?select=title,event_date,time_label,location,starts_at,ends_at,all_day,description&source=eq.google&or=(event_date.gte.'+t+',ends_at.gt.'+t+')&order=event_date.asc,starts_at.asc&limit=200'),
       sbGet('field_trips?select=grade_group,group_order,trip_date,title,url,sort&order=group_order.asc,sort.asc'),
       sbGet('documents?select=category,title,url,sort&order=sort.asc'),
       sbGet('notifications?select=title,body,url,created_at&order=created_at.desc&limit=10'),
