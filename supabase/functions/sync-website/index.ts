@@ -1,5 +1,5 @@
 // Pulls the latest content from csjax.org and the school Google Calendar into the app database.
-// Runs daily at 5:00 PM America/New_York (pg_cron) and on demand from the admin page.
+// Runs daily at 11:00 AM and 6:00 PM America/New_York (pg_cron) and on demand from the admin page.
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const SITE = "https://www.csjax.org";
@@ -24,7 +24,7 @@ function decode(s: string) {
     return ENT[e.toLowerCase()] ?? m;
   });
 }
-const clean = (s: string) => decode(s.replace(/<[^>]*>/g, " ")).replace(/[​ ]/g, " ").replace(/\s+/g, " ").trim();
+const clean = (s: string) => decode(s.replace(/<[^>]*>/g, " ")).replace(/[\u200B\u00A0]/g, " ").replace(/\s+/g, " ").trim();
 function absUrl(href: string) {
   href = decode(href.trim());
   if (/^https?:\/\//i.test(href)) return href;
@@ -318,10 +318,11 @@ Deno.serve(async (req) => {
     const { data: row } = email ? await admin.from("admins").select("email").eq("email", email).maybeSingle() : { data: null };
     if (!row) return json({ error: "Sign in as a school admin to refresh content." }, 401);
   }
-  // pg_cron fires at 21:00 and 22:00 UTC; only the run that lands on 5 PM New York time does work.
+  // pg_cron fires at 15:00, 16:00, 22:00 and 23:00 UTC; only the runs that land on 11 AM or 6 PM New York time do work.
   if (isCron && body.scheduled) {
     const p = nyParts(new Date());
-    if (!(p.hour === "5" && p.dayPeriod === "PM")) return json({ skipped: "not 5 PM in New York" });
+    const due = (p.hour === "11" && p.dayPeriod === "AM") || (p.hour === "6" && p.dayPeriod === "PM");
+    if (!due) return json({ skipped: "not 11 AM or 6 PM in New York" });
   }
   const debug = !!body.debug;
   const results: Record<string, unknown> = {};

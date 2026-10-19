@@ -9,13 +9,13 @@ Installable web app (PWA) for Cornerstone Christian School families and staff. S
 ## How content gets into the app
 | Content | Source | When |
 |---|---|---|
-| Calendar | Google Calendar `ccsjax.org_2pbo7t17fq764q7u13u9jvce8c@group.calendar.google.com` | Daily 5:00 PM ET + "Update now" |
-| Announcements | csjax.org/news-and-events/announcements.cfm (+ admin posts) | Daily 5:00 PM ET |
-| Field trip permission slips | csjax.org Document Library → Field Trips Permission Slips | Daily 5:00 PM ET |
-| Documents & school forms | csjax.org Document Library | Daily 5:00 PM ET |
+| Calendar | Google Calendar `ccsjax.org_2pbo7t17fq764q7u13u9jvce8c@group.calendar.google.com` | Daily 11:00 AM & 6:00 PM ET + "Update now" |
+| Announcements | csjax.org/news-and-events/announcements.cfm (+ admin posts) | Daily 11:00 AM & 6:00 PM ET |
+| Field trip permission slips | csjax.org Document Library → Field Trips Permission Slips | Daily 11:00 AM & 6:00 PM ET |
+| Documents & school forms | csjax.org Document Library | Daily 11:00 AM & 6:00 PM ET |
 | Push notifications | Sent from /admin | On demand |
 
-The daily job is a Supabase `pg_cron` task (`csjax-daily-sync`) that calls the `sync-website` Edge Function at 21:00 and 22:00 UTC; the function only runs the update at 5 PM New York time, so it follows daylight saving.
+The daily job is a Supabase `pg_cron` task (`csjax-daily-sync`) that calls the `sync-website` Edge Function at 15:00, 16:00, 22:00 and 23:00 UTC; the function only runs the update at 11 AM and 6 PM New York time, so it follows daylight saving.
 
 ## Files
 - `index.html` — the app (Home, Calendar, Field Trips, Info, Links, Contact)
