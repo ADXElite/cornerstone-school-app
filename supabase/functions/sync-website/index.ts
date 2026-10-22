@@ -225,7 +225,9 @@ async function syncAnnouncements(debug: boolean) {
     if (!text || text.length < 3) continue;
     let title = tm ? clean(tm[2]) : "";
     const hrefs = [...inner.matchAll(/href\s*=\s*["']([^"']+)["']/gi)].map((x) => x[1]).filter((h) => !/^(javascript:|#|mailto:)/i.test(h));
-    const link = hrefs.length ? absUrl(hrefs[0]) : null;
+    // Links back to the app itself (app.csjax.org, with or without "www.") are dropped: the reader is already in the app.
+    const firstLink = hrefs.length ? absUrl(hrefs[0]) : null;
+    const link = firstLink && /^https?:\/\/(www\.)?app\.csjax\.org(\/|$)/i.test(firstLink) ? null : firstLink;
     let body = text;
     if (!title) {
       const parts = inner.split(/<br\s*\/?>|<\/p>|<\/div>|\n/i).map(clean).filter(Boolean);
