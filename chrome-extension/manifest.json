@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Cornerstone Dismissal Sync",
+  "version": "1.0.1",
+  "description": "Pulls each homeroom's dismissal list from KidAccount at 2:15 PM and publishes it to the classroom smartboard pages on app.csjax.org.",
+  "permissions": ["alarms", "storage", "tabs", "scripting", "notifications"],
+  "host_permissions": [
+    "https://kidaccount.net/*",
+    "https://cvvdwhgdiqnoqgxtgzfw.supabase.co/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "Cornerstone Dismissal Sync", "default_icon": "icon128.png" },
+  "icons": { "128": "icon128.png" }
+}
