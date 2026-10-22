@@ -273,7 +273,7 @@ button.row:active{background:var(--bg)}
   <div><h1>Field Trips</h1><p class="muted">Permission slips by grade level. Tap a trip to sign the form.</p></div>
   <div class="chips" id="trip-chips" role="group" aria-label="Grade level"></div>
   <div class="list" id="trip-list"></div>
-  <a class="more" href="https://www.csjax.org/school-info/document-library.cfm" target="_blank" rel="noopener">Document Library on csjax.org →</a>
+  <a class="more" href="https://www.csjax.org/school-info/field-trip-permission-slips.cfm" target="_blank" rel="noopener">Field Trip Permission Slips on csjax.org →</a>
 </section>
 
 <!-- INFO -->
@@ -458,19 +458,14 @@ const HIDE_DOCS=[/student\s*id\s*number/i,/261055782295059/,/bus\s*route/i];
 let NEWS=[{t:'Dismissal Updates',d:'Cornerstone School has partnered with KidAccount to assist with Afternoon Student Dismissal.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
 let EVENTS=[];
 let TRIPS=[
- ['Kindergarten thru 2nd Grade','2026-10-15','Cummer Museum','https://csjax.jotform.com/262595812403963'],
- ['Kindergarten thru 2nd Grade','2026-11-06','Color Me Mine','https://csjax.jotform.com/262584264079971'],
- ['Kindergarten thru 2nd Grade','2026-12-07','Nutcracker Ballet (Student Permission Slip)','https://csjax.jotform.com/262576336118966'],
- ['Kindergarten thru 2nd Grade','2026-12-07','Nutcracker Ballet (Chaperone Sign-Up)','https://csjax.jotform.com/262595574992981'],
- ['3rd Grade thru 5th Grade','2026-10-23','Cummer Museum','https://csjax.jotform.com/262585054228965'],
- ['3rd Grade thru 5th Grade','2026-11-06','Color Me Mine','https://csjax.jotform.com/262584979957989'],
- ['3rd Grade thru 5th Grade','2026-12-07','Nutcracker Ballet (Student Permission Slip)','https://csjax.jotform.com/262576336118966'],
- ['3rd Grade thru 5th Grade','2026-12-07','Nutcracker Ballet (Chaperone Sign-Up)','https://csjax.jotform.com/262595574992981'],
- ['6th Grade thru 12th Grade','2026-11-06','Conners Amazing Acres','https://csjax.jotform.com/262597516821970'],
- ['6th Grade thru 12th Grade','2026-12-07','Nutcracker Ballet (Student Permission Slip)','https://csjax.jotform.com/262576336118966'],
- ['6th Grade thru 12th Grade','2026-12-07','Nutcracker Ballet (Chaperone Sign-Up)','https://csjax.jotform.com/262595574992981'],
- ['6th Grade thru 12th Grade','2027-04-15','Grad Bash (Senior Trip 12th Grade Only)','https://csjax.jotform.com/262595541536969']
-].map(([g,d,t,u])=>({g,d,t,u}));
+  ['Kindergarten thru 2nd Grade','2026-11-06','Color Me Mine','https://csjax.jotform.com/262584264079971'],
+  ['Kindergarten thru 2nd Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
+  ['3rd Grade thru 5th Grade','2026-11-18','Color Me Mine','https://csjax.jotform.com/262584979957989'],
+  ['3rd Grade thru 5th Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
+  ['6th Grade thru 12th Grade','2026-11-06',"Conner's Amazing Acers",'https://csjax.jotform.com/262597516821970'],
+  ['6th Grade thru 12th Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
+  ['6th Grade thru 12th Grade','2027-04-15','Grad Bash (12th Grade Only)','https://csjax.jotform.com/262595541536969']
+ ].map(([g,d,t,u])=>({g,d,t,u}));
 let DOCS=[];
 let ALERTS=[];
 
@@ -581,11 +576,11 @@ async function loadLive(){
       sbGet('field_trips?select=grade_group,group_order,trip_date,title,url,sort&order=group_order.asc,sort.asc'),
       sbGet('documents?select=category,title,url,sort&order=sort.asc'),
       sbGet('notifications?select=title,body,url,created_at&order=created_at.desc&limit=10'),
-      sbGet('field_trips?select=synced_at&limit=1')
+      sbGet('documents?select=synced_at&limit=1')
     ]);
     NEWS=ann.map(a=>({t:a.title,d:a.body,u:a.link,pin:a.pinned}));
     EVENTS=ev.map(e=>({d:e.event_date,t:e.title,tm:e.time_label,loc:e.location,s:e.starts_at,en:e.ends_at,ad:e.all_day,desc:(e.description&&norm(e.description)!==norm(e.title))?e.description:null}));
-    if(ft.length)TRIPS=ft.map(x=>({g:x.grade_group,d:x.trip_date,t:x.title,u:x.url}));
+    TRIPS=ft.map(x=>({g:x.grade_group,d:x.trip_date,t:x.title,u:x.url}));
     DOCS=docs.map(d=>({c:d.category,t:d.title,u:d.url}));
     ALERTS=notes.map(n=>({t:n.title,b:n.body,u:n.url,at:n.created_at}));
     if(runs[0])$('#synced').textContent='Updated from csjax.org '+new Date(runs[0].synced_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});

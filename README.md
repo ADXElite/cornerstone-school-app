@@ -11,7 +11,7 @@ Installable web app (PWA) for Cornerstone Christian School families and staff. S
 |---|---|---|
 | Calendar | Google Calendar `ccsjax.org_2pbo7t17fq764q7u13u9jvce8c@group.calendar.google.com` | Daily 11:00 AM & 6:00 PM ET + "Update now" |
 | Announcements | csjax.org/news-and-events/announcements.cfm (+ admin posts) | Daily 11:00 AM & 6:00 PM ET |
-| Field trip permission slips | csjax.org Document Library → Field Trips Permission Slips | Daily 11:00 AM & 6:00 PM ET |
+| Field trip permission slips | csjax.org School Info → Field Trip Permission Slips (/school-info/field-trip-permission-slips.cfm) | Daily 11:00 AM & 6:00 PM ET |
 | Documents & school forms | csjax.org Document Library | Daily 11:00 AM & 6:00 PM ET |
 | Push notifications | Sent from /admin | On demand |
 

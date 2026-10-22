@@ -248,33 +248,43 @@ async function syncAnnouncements(debug: boolean) {
   return { announcements: items.length };
 }
 
-// ---------- Document Library: field trip slips + documents ----------
+// ---------- Field Trip Permission Slips (own page since Oct 2026) + Document Library ----------
+// Field trip page: <h3 class="toolhead">Grade group</h3> then links like "Color Me Mine (11/06/2026)".
+async function fetchFieldTrips() {
+  const html = await getText(SITE + "/school-info/field-trip-permission-slips.cfm");
+  const mainAt = html.search(/id=["']main_container["']/i);
+  const footAt = html.search(/<footer\b/i);
+  const body = html.slice(mainAt > 0 ? mainAt : 0, footAt > mainAt ? footAt : html.length);
+  const trips: Record<string, unknown>[] = [];
+  const groups: string[] = [];
+  const re = /<h3[^>]*class=["'][^"']*toolhead[^"']*["'][^>]*>([\s\S]*?)<\/h3>([\s\S]*?)(?=<h3[^>]*class=["'][^"']*toolhead|$)/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(body))) {
+    const group = clean(m[1]);
+    if (!group) continue;
+    if (!groups.includes(group)) groups.push(group);
+    for (const tk of tokens(m[2])) {
+      if (tk.t !== "a" || !tk.v || /^(javascript:|#|mailto:|tel:)/i.test(tk.href)) continue;
+      const date = parseUSDate(tk.v);
+      // Title without the date, whether the date is written before "(11/06/2026) Trip" or after "Trip (11/06/2026)".
+      const title = tk.v
+        .replace(/\(\s*\d{1,2}\/\d{1,2}\/\d{4}\s*\)/, "")
+        .replace(/^\d{1,2}\/\d{1,2}\/\d{4}\s*[-–—:]?\s*/, "")
+        .replace(/\s*[-–—:]\s*\d{1,2}\/\d{1,2}\/\d{4}\s*$/, "")
+        .replace(/\s+/g, " ").trim();
+      trips.push({ grade_group: group, group_order: groups.indexOf(group), trip_date: date, title: title || tk.v, url: absUrl(tk.href), sort: trips.length });
+    }
+  }
+  if (!groups.length) throw new Error("No grade groups found on Field Trip Permission Slips page (page layout may have changed)");
+  return { trips, groups };
+}
+
 async function syncDocumentLibrary(debug: boolean) {
+  const { trips, groups } = await fetchFieldTrips();
   const html = await getText(SITE + "/school-info/document-library.cfm");
-  const ftStart = html.search(/Field\s*Trips?\s*Permission/i);
   const docStart = html.search(/Document\s*Resources/i);
   const formStart = html.search(/School\s*Forms/i);
   const footer = html.search(/Footer Logo/i);
-  if (ftStart < 0) throw new Error("Field Trips section not found on Document Library page");
-
-  // Field trips: anchors whose text starts with a date, grouped under the latest "... Grade" label.
-  const ftEnd = docStart > ftStart ? docStart : (formStart > ftStart ? formStart : (footer > 0 ? footer : html.length));
-  const trips: Record<string, unknown>[] = [];
-  const groups: string[] = [];
-  let group = "All Grades";
-  for (const tk of tokens(html.slice(ftStart, ftEnd))) {
-    const label = tk.v;
-    if (/grade|kindergarten/i.test(label) && !/^\d{1,2}\/\d{1,2}\/\d{4}/.test(label) && label.length < 70) {
-      group = label.replace(/\(.*?\)/g, "").replace(/Field\s*Trips?\s*Permission\s*Slips?/i, "").trim() || group;
-      if (!groups.includes(group)) groups.push(group);
-      if (tk.t === "text") continue;
-    }
-    if (tk.t === "a" && /^\d{1,2}\/\d{1,2}\/\d{4}/.test(label)) {
-      if (!groups.includes(group)) groups.push(group);
-      const title = label.replace(/^\d{1,2}\/\d{1,2}\/\d{4}\s*[-–—:]?\s*/, "").trim();
-      trips.push({ grade_group: group, group_order: groups.indexOf(group), trip_date: parseUSDate(label), title, url: absUrl(tk.href), sort: trips.length });
-    }
-  }
 
   // Documents and forms
   const docs: Record<string, unknown>[] = [];
@@ -291,10 +301,12 @@ async function syncDocumentLibrary(debug: boolean) {
   grab(formStart, footer > formStart ? footer : html.length, "School Forms");
 
   if (debug) return { trips, docs, groups };
-  if (!trips.length) throw new Error("No field trip slips found (page layout may have changed)");
+  // An empty list is valid now (no trips posted); the page itself was found above.
   await admin.from("field_trips").delete().gte("id", 0);
-  const { error: e1 } = await admin.from("field_trips").insert(trips);
-  if (e1) throw e1;
+  if (trips.length) {
+    const { error: e1 } = await admin.from("field_trips").insert(trips);
+    if (e1) throw e1;
+  }
   if (docs.length) {
     await admin.from("documents").delete().gte("id", 0);
     const { error: e2 } = await admin.from("documents").insert(docs);
