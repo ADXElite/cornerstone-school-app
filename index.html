@@ -124,6 +124,19 @@ p{margin:0}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chips button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;font-size:.9rem;cursor:pointer}
 .chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* Field trips: grade picker */
+.gradepick{background:var(--surface);border:2px solid var(--red);border-radius:16px;padding:14px;display:grid;gap:12px}
+.step{display:flex;align-items:center;gap:10px;margin:0;font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);line-height:1.1}
+.step span{flex:none;width:28px;height:28px;border-radius:50%;background:var(--red);color:var(--on-red);display:grid;place-items:center;font-family:var(--body);font-size:.95rem;font-weight:800}
+.gradepick .chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.gradepick .chips button{border:2px solid var(--line);border-radius:12px;padding:12px 8px;display:grid;gap:2px;justify-items:center;text-align:center;color:var(--ink);background:var(--bg);min-height:72px;align-content:center}
+.gradepick .chips button b{font-family:var(--display);font-size:1.6rem;font-weight:800;line-height:1}
+.gradepick .chips button small{font-size:.74rem;font-weight:600;color:var(--muted);line-height:1.2}
+.gradepick .chips button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--on-red);box-shadow:0 4px 14px rgba(228,1,13,.28)}
+.gradepick .chips button[aria-pressed="true"] small{color:var(--on-red);opacity:.92}
+.gradepick .chips button[aria-pressed="true"] b::before{content:"\2713\00a0";font-size:1.1rem;vertical-align:.18em}
+.gradepick .hint{margin:0;font-size:.85rem;color:var(--muted)}
+.step.two{font-size:1.05rem;margin-top:4px}
 .slip{display:inline-flex;margin-top:8px;background:var(--red);color:var(--on-red);text-decoration:none;font-weight:700;font-size:.88rem;padding:7px 12px;border-radius:9px}
 
 /* Info accordions */
@@ -270,8 +283,13 @@ button.row:active{background:var(--bg)}
 
 <!-- FIELD TRIPS -->
 <section class="screen" data-screen="trips" hidden>
-  <div><h1>Field Trips</h1><p class="muted">Permission slips by grade level. Tap a trip to sign the form.</p></div>
-  <div class="chips" id="trip-chips" role="group" aria-label="Grade level"></div>
+  <div><h1>Field Trips</h1><p class="muted">Permission slips are different for each grade level. Pick your child's grade first so you sign the right slip.</p></div>
+  <div class="gradepick">
+    <h2 class="step" id="trip-step1"><span>1</span>Choose your child's grade</h2>
+    <div class="chips" id="trip-chips" role="group" aria-labelledby="trip-step1"></div>
+    <p class="hint">Have children in different grades? Sign a slip for each grade.</p>
+  </div>
+  <h2 class="step two" id="trip-step2"><span>2</span>Tap a trip to sign its slip</h2>
   <div class="list" id="trip-list"></div>
   <a class="more" href="https://www.csjax.org/school-info/field-trip-permission-slips.cfm" target="_blank" rel="noopener">Field Trip Permission Slips on csjax.org →</a>
 </section>
@@ -505,7 +523,8 @@ function renderTrips(){
   const groups=[...new Set(TRIPS.map(t=>t.g))];
   if(!groups.includes(GRADE))GRADE=groups[0];
   const short=g=>g.replace(/Kindergarten/i,'K').replace(/\s*Grades?\b/gi,'').replace(/\s*(thru|through|-|to)\s*/i,'–').trim();
-  $('#trip-chips').innerHTML=groups.map(g=>`<button data-grade="${esc(g)}" aria-pressed="${g===GRADE}" title="${esc(g)}">${esc(short(g))}</button>`).join('');
+  const full=g=>g.replace(/\s*(thru|through)\s*/i,' – ');
+  $('#trip-chips').innerHTML=groups.map(g=>`<button data-grade="${esc(g)}" aria-pressed="${g===GRADE}" aria-label="${esc(g)}"><b>${esc(short(g))}</b><small>${esc(full(g))}</small></button>`).join('');
   const t=localISO();
   const list=TRIPS.filter(x=>x.g===GRADE).sort((a,b)=>(a.d||'').localeCompare(b.d||''));
   const rows=list.map(x=>{const d=x.d?dt(x.d):null;const past=x.d&&x.d<t;
