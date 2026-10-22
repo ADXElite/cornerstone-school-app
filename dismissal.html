@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Dismissal Board</title>
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Smartboard dismissal board: black header, one column per dismissal method, auto-fits the screen */
+:root{
+  --red:#E4010D; --ink:#141213; --bg:#F6F4F4; --surface:#FFFFFF; --muted:#6B6466; --line:#E4DFDF;
+  --head:#141213; --chip:#FBE9EA; --chip-ink:#A0000A;
+  --car:#1D5FB8; --bus:#C98A00; --after:#1E7A46; --walk:#7A3FB0; --other:#6B6466;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs,26px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.2;min-height:100vh}
+header{background:var(--head);color:#F6F4F4;border-bottom:.2rem solid var(--red);padding:.55rem 1rem;display:flex;align-items:center;gap:1rem}
+header img{height:2.4rem;width:auto;display:block}
+header .who{flex:1;min-width:0}
+header h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:1.8rem;margin:0;line-height:1}
+header .sub{font-size:.8rem;opacity:.8;letter-spacing:.06em;text-transform:uppercase}
+header .stamp{text-align:right;font-size:.75rem;opacity:.85}
+header .stamp b{display:block;font-family:var(--display);font-size:1.3rem;letter-spacing:.03em}
+main{padding:.8rem 1rem 1rem}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.8rem;align-items:start}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:.6rem;overflow:hidden}
+.col h2{margin:0;padding:.4rem .7rem;color:#fff;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:1.3rem;display:flex;justify-content:space-between;align-items:baseline}
+.col h2 span{font-size:.9rem;opacity:.9}
+.col[data-k=car] h2{background:var(--car)} .col[data-k=bus] h2{background:var(--bus)}
+.col[data-k=after] h2{background:var(--after)} .col[data-k=walk] h2{background:var(--walk)}
+.col[data-k=other] h2{background:var(--other)}
+.sub-h{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:1rem;color:var(--muted);padding:.4rem .7rem .1rem;border-top:1px solid var(--line)}
+.sub-h:first-of-type{border-top:0}
+ul{list-style:none;margin:0;padding:.2rem 0 .4rem}
+li{padding:.22rem .7rem;display:flex;justify-content:space-between;gap:.6rem;font-weight:600;font-size:1rem}
+li .tag{flex:none;font-family:var(--display);font-weight:700;background:var(--chip);color:var(--chip-ink);border-radius:.3rem;padding:0 .35rem;font-size:.9rem;align-self:center}
+.absent{margin-top:.8rem;color:var(--muted);font-size:.8rem}
+.absent b{text-transform:uppercase;letter-spacing:.06em}
+.msg{max-width:40rem;margin:3rem auto;text-align:center;display:grid;gap:.6rem}
+.msg h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:2rem;margin:0}
+.msg p{margin:0;color:var(--muted);font-size:1rem}
+/* Index list */
+.list{max-width:44rem;margin:1rem auto;display:grid;gap:.5rem}
+.list a{display:flex;justify-content:space-between;gap:1rem;background:var(--surface);border:1px solid var(--line);border-radius:.5rem;padding:.6rem .9rem;text-decoration:none;color:inherit;font-weight:600;font-size:.9rem}
+.list a small{color:var(--muted);font-weight:400}
+</style>
+</head>
+<body>
+<header>
+  <img src="/icons/logo-horizontal.webp" alt="Cornerstone Christian School">
+  <div class="who"><h1 id="title">Dismissal</h1><div class="sub" id="subtitle">Today's dismissal</div></div>
+  <div class="stamp" id="stamp"></div>
+</header>
+<main id="main"><div class="msg"><h2>Loading…</h2></div></main>
+<script>
+const slug = (location.pathname.split('/')[2] || '').toLowerCase();
+const main = document.getElementById('main');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const todayNY = () => new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York'}).format(new Date());
+const fmtTime = iso => new Date(iso).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'});
+const fmtDate = d => new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+function kindOf(g){
+  const s = (g.key+' '+g.method).toLowerCase();
+  if (/car/.test(s)) return 'car';
+  if (/bus/.test(s)) return 'bus';
+  if (/after|extended/.test(s)) return 'after';
+  if (/walk/.test(s)) return 'walk';
+  return 'other';
+}
+function message(h, p){ main.innerHTML = `<div class="msg"><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`; }
+
+function renderBoard(b){
+  document.title = `${b.teacher_name} — Dismissal`;
+  document.getElementById('title').textContent = b.teacher_name;
+  document.getElementById('subtitle').textContent = 'Dismissal · ' + fmtDate(b.board_date);
+  document.getElementById('stamp').innerHTML = `Updated<b>${esc(fmtTime(b.updated_at))}</b>`;
+  if (b.board_date !== todayNY()) {
+    return message("Today's list isn't in yet", "It's pulled from KidAccount at 2:15 PM on school days. This screen refreshes on its own.");
+  }
+  const groups = (b.groups||[]).filter(g => g.students && g.students.length);
+  if (!groups.length) return message('No students listed', 'KidAccount shows no dismissal entries for this class today.');
+  let html = '<div class="cols">';
+  for (const g of groups){
+    const k = kindOf(g);
+    html += `<section class="col" data-k="${k}"><h2>${esc(g.method)}<span>${g.students.length}</span></h2>`;
+    if (k === 'bus') {
+      // Sub-group by bus number
+      const by = {};
+      for (const s of g.students){ (by[s.detail || '—'] ||= []).push(s); }
+      const keys = Object.keys(by).sort((a,b)=>(parseFloat(a)||999)-(parseFloat(b)||999) || a.localeCompare(b));
+      for (const n of keys){
+        html += `<div class="sub-h">Bus ${esc(n)}</div><ul>` + by[n].map(s=>`<li>${esc(s.name)}</li>`).join('') + '</ul>';
+      }
+    } else {
+      // Show the sub-method (e.g. car number or program) only when it adds information
+      html += '<ul>' + g.students.map(s => {
+        const d = s.detail && !/^car rider$/i.test(s.detail) ? `<span class="tag">${esc(s.detail)}</span>` : '';
+        return `<li><span>${esc(s.name)}</span>${d}</li>`;
+      }).join('') + '</ul>';
+    }
+    html += '</section>';
+  }
+  html += '</div>';
+  if (b.absent && b.absent.length) html += `<div class="absent"><b>Absent today:</b> ${b.absent.map(esc).join(', ')}</div>`;
+  main.innerHTML = html;
+  fit();
+}
+
+function renderIndex(list){
+  document.getElementById('title').textContent = 'Dismissal Boards';
+  document.getElementById('subtitle').textContent = 'One link per homeroom — open it on that classroom\'s smartboard';
+  if (!list.length) return message('No boards yet', 'Boards appear after the Chrome extension runs its first pull from KidAccount.');
+  main.innerHTML = '<div class="list">' + list.map(t =>
+    `<a href="/dismissal/${esc(t.slug)}"><span>${esc(t.teacher_name)}</span><small>app.csjax.org/dismissal/${esc(t.slug)} · ${esc(t.board_date === todayNY() ? 'today ' + fmtTime(t.updated_at) : fmtDate(t.board_date))}</small></a>`
+  ).join('') + '</div>';
+}
+
+// Shrink text until the whole board fits on one screen (no scrolling on a smartboard)
+function fit(){
+  let fs = Math.max(16, Math.min(34, window.innerWidth / 55));
+  const root = document.documentElement;
+  root.style.setProperty('--fs', fs + 'px');
+  while (document.body.scrollHeight > window.innerHeight && fs > 12){
+    fs -= 1; root.style.setProperty('--fs', fs + 'px');
+  }
+}
+window.addEventListener('resize', () => slug && fit());
+
+let last = '';
+async function load(){
+  try{
+    const r = await fetch('/api/dismissal' + (slug ? '?slug=' + encodeURIComponent(slug) : ''), {cache:'no-store'});
+    const body = await r.text();
+    if (body === last) return;
+    last = body;
+    const data = JSON.parse(body);
+    if (r.status === 403) return message('Campus network only', 'Dismissal boards can only be viewed on the Cornerstone network.');
+    if (r.status === 404) return message('Board not found', 'Check the link for this classroom.');
+    if (!r.ok) return message('Unable to load', 'Trying again in a minute.');
+    slug ? renderBoard(data) : renderIndex(data);
+  }catch(e){ /* keep showing the last good board; retry next tick */ }
+}
+load();
+setInterval(load, 60000);
+// Reload once a day overnight so the page picks up any updates
+setTimeout(() => location.reload(), 6 * 3600 * 1000);
+</script>
+</body>
+</html>
