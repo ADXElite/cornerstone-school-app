@@ -40,7 +40,7 @@ Pushing to `main` deploys automatically once the repo is connected in Vercel →
 - **Boards:** `https://app.csjax.org/dismissal/<teacher-name>` (e.g. `/dismissal/raja-backmon`); list of all boards at `/dismissal`.
 - **Campus only:** `/api/dismissal` answers only requests from the IPs in the Vercel env var `DISMISSAL_ALLOWED_IPS` (currently `107.1.157.26`). Everyone else sees "Campus network only".
 - **Data:** table `public.dismissal_boards` (no public access). The Chrome extension writes through `ingest_dismissal(key, boards)`; the API reads through `read_dismissal(key, slug)` using `DISMISSAL_READ_KEY`. Both keys live in `private.config`.
-- **Source:** `chrome-extension/` — pulls every teacher page from KidAccount (teacherlist.php → teacherspage.php) at 2:30 PM on weekdays in the background of a signed-in Chrome, then uploads. Boards refresh themselves every minute and fit the screen.
+- **Source:** `chrome-extension/` — pulls every teacher page from KidAccount (teacherlist.php → teacherspage.php) at 2:20 PM on weekdays in the background of a signed-in Chrome, then uploads. Boards refresh themselves every minute and fit the screen.
 - The upload key is entered in the extension's Settings (not stored in this repo).
 
 ### Classroom Chromebook kiosk (`/kiosk`)
@@ -50,11 +50,11 @@ Pushing to `main` deploys automatically once the repo is connected in Vercel →
 - **Push with Google Admin:** Admin console → Devices → Chrome → Apps & extensions → **Kiosks** → pick the classroom OU → **+** → **Add by URL** → `https://app.csjax.org/kiosk`. Then set it as the auto-launch kiosk app for that OU (Kiosks → Auto-launch app). The Dismissal Sync extension is *not* needed on these devices.
 - Campus-only rules still apply: off the school network the kiosk shows "Campus network only".
 
-### Show the board only 2:30–3:15 PM (no kiosk lock)
-`kiosk-launcher/` is a small extension for the classroom Chromebooks/Chromeboxes. On school days it opens `https://app.csjax.org/kiosk` full-screen at **2:30 PM** and closes it at **3:15 PM**, so the device is free for teaching the rest of the day. KidAccount is pulled at 2:30 PM by the Dismissal Sync extension; the board fills in within a minute or two.
-- If the device starts or wakes during the window, the board opens then. If a teacher closes it, it stays closed until the next school day.
+### Show the board only 2:30–3:30 PM (no kiosk lock)
+`kiosk-launcher/` is a small extension for the classroom Chromebooks/Chromeboxes. On school days it opens `https://app.csjax.org/kiosk` full-screen at **2:30 PM** and closes it at **3:30 PM**, so the device is free for teaching the rest of the day. KidAccount is pulled at 2:20 PM by the Dismissal Sync extension, so the board is ready when it opens.
+- If the device starts or wakes during the window, the board opens then. Teachers can tap **Close board** (bottom-right of the board) to close it; it then stays closed until the next school day.
 - **Deploy:** zip the `kiosk-launcher` folder → Chrome Web Store Developer Dashboard → upload as a **Private** (domain-only) item → Admin console → Devices → Chrome → Apps & extensions → **Users & browsers** → classroom OU → **+** → Add from Chrome Web Store (or by ID) → **Force install**. Use this *instead of* the kiosk auto-launch setup above.
 - **Optional policy** (same screen → *Policy for extensions*), JSON:
-  `{"board": {"Value": "raja-backmon"}, "start": {"Value": "14:30"}, "end": {"Value": "15:15"}, "weekdaysOnly": {"Value": true}}`
+  `{"board": {"Value": "raja-backmon"}, "start": {"Value": "14:30"}, "end": {"Value": "15:30"}, "weekdaysOnly": {"Value": true}}`
   Leave `board` out to let the teacher pick the class on screen (saved on that device).
 

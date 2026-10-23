@@ -83,7 +83,7 @@ function renderBoard(b){
   document.getElementById('subtitle').textContent = 'Dismissal · ' + fmtDate(b.board_date);
   document.getElementById('stamp').innerHTML = `Updated<b>${esc(fmtTime(b.updated_at))}</b>`;
   if (b.board_date !== todayNY()) {
-    return message("Today's list isn't in yet", "It's pulled from KidAccount at 2:30 PM on school days. This screen refreshes on its own.");
+    return message("Today's list isn't in yet", "It's pulled from KidAccount at 2:20 PM on school days. This screen refreshes on its own.");
   }
   const groups = (b.groups||[]).filter(g => g.students && g.students.length);
   if (!groups.length) return message('No students listed', 'KidAccount shows no dismissal entries for this class today.');

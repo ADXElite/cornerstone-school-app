@@ -45,9 +45,15 @@ body.showing #picker{display:none}
 .actions button{font:700 18px var(--display);text-transform:uppercase;letter-spacing:.05em;background:transparent;border:2px solid var(--line);border-radius:8px;padding:10px 16px;cursor:pointer;color:var(--muted)}
 
 /* "Change class" button over the board: faint until touched */
-#change{position:fixed;right:14px;bottom:14px;z-index:5;display:none;font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;background:rgba(20,18,19,.78);color:#fff;border:0;border-radius:999px;padding:10px 16px;cursor:pointer;opacity:.25;transition:opacity .2s}
-#change:hover,#change:focus-visible,body.woke #change{opacity:1}
-body.showing #change{display:block}
+#tools{position:fixed;right:14px;bottom:14px;z-index:5;display:none;gap:8px}
+body.showing #tools{display:flex}
+#tools button{font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;background:rgba(20,18,19,.8);color:#fff;border:0;border-radius:999px;padding:10px 16px;cursor:pointer;opacity:.35;transition:opacity .2s}
+#tools #close{background:var(--red);opacity:.6}
+#tools button:hover,#tools button:focus-visible,body.woke #tools button{opacity:1}
+#closed{position:fixed;inset:0;z-index:10;display:none;place-content:center;text-align:center;background:var(--ink);color:#F6F4F4;gap:16px}
+#closed h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:40px;margin:0}
+#closed button{font:700 20px var(--display);text-transform:uppercase;letter-spacing:.05em;background:var(--red);color:#fff;border:0;border-radius:8px;padding:12px 22px;cursor:pointer;justify-self:center}
+body.closed #closed{display:grid}
 </style>
 </head>
 <body>
@@ -58,8 +64,9 @@ body.showing #change{display:block}
   </header>
   <main id="pmain"><div class="msg"><h2>Loading…</h2></div></main>
 </section>
+<div id="closed"><h2>Board closed</h2><button type="button" id="reopen">Show board again</button></div>
 <iframe id="board" title="Dismissal board"></iframe>
-<button id="change" type="button">Change class</button>
+<div id="tools"><button id="change" type="button">Change class</button><button id="close" type="button">Close board</button></div>
 <script>
 const KEY = 'ccs-kiosk-board';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -117,6 +124,13 @@ async function openPicker(){
 }
 
 document.getElementById('change').addEventListener('click', openPicker);
+// Close board: the launcher extension closes its window; without it, try a normal close, else blank the screen.
+document.getElementById('close').addEventListener('click', () => {
+  if (document.documentElement.dataset.launcher) return window.postMessage({ ccsKiosk: 'close' }, location.origin);
+  window.close();
+  setTimeout(() => { board.removeAttribute('src'); document.body.classList.add('closed'); }, 300);
+});
+document.getElementById('reopen').addEventListener('click', () => { document.body.classList.remove('closed'); show(store.get()); });
 // Make the button easy to find after any touch, then let it fade again.
 let wakeT;
 const wake = () => { document.body.classList.add('woke'); clearTimeout(wakeT); wakeT = setTimeout(() => document.body.classList.remove('woke'), 5000); };
