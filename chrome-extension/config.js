@@ -5,5 +5,5 @@ self.DISMISSAL_CONFIG = {
   SUPABASE_KEY: 'sb_publishable_hnUHrqYS2un679djbzsXxg_oLYDQDp0',
   INGEST_KEY: '',
   BOARD_BASE_URL: 'https://app.csjax.org/dismissal/',
-  DEFAULTS: { time: '14:15', weekdaysOnly: true, recheck: false, recheckUntil: '15:15' }
+  DEFAULTS: { time: '14:30', weekdaysOnly: true, recheck: false, recheckUntil: '15:15' }
 };
