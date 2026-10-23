@@ -10,6 +10,15 @@ const COMBINED = {
   'williams-newkirk': { teacher_name: 'Williams & Newkirk', slugs: ['jarrodd-williams', 'alexandria-newkirk'] }
 };
 
+// Display-name overrides (KidAccount's name is replaced on every pull, so rename here).
+// slug -> { name, link }: `link` is an extra, nicer link that opens the same board.
+const RENAME = {
+  'nichelle-english-wilson': { name: 'Nichelle Wilson', link: 'nichelle-wilson' }
+};
+const ALIAS = Object.fromEntries(Object.entries(RENAME).filter(([, v]) => v.link).map(([k, v]) => [v.link, k]));
+const HIDDEN = new Set(Object.values(COMBINED).flatMap(d => d.slugs));   // only shown as part of their combined board
+const named = b => b && RENAME[b.slug] ? { ...b, teacher_name: RENAME[b.slug].name, slug: RENAME[b.slug].link || b.slug } : b;
+
 function merge(slug, def, boards) {
   boards = boards.filter(Boolean);
   if (!boards.length) return null;
@@ -17,7 +26,7 @@ function merge(slug, def, boards) {
   const today = boards.filter(b => b.board_date === date);
   const groups = [];
   for (const b of today) {
-    const who = b.teacher_name.split(' ').slice(-1)[0];               // last name tag
+    const who = (named(b).teacher_name).split(' ').slice(-1)[0];               // last name tag
     for (const g of b.groups || []) {
       let m = groups.find(x => x.method === g.method);
       if (!m) groups.push(m = { key: g.key, method: g.method, students: [] });
@@ -60,7 +69,8 @@ module.exports = async (req, res) => {
   }
 
   const url = new URL(req.url, 'http://x');
-  const slug = (url.searchParams.get('slug') || '').toLowerCase().replace(/[^a-z0-9-]/g, '') || null;
+  let slug = (url.searchParams.get('slug') || '').toLowerCase().replace(/[^a-z0-9-]/g, '') || null;
+  if (slug && ALIAS[slug]) slug = ALIAS[slug];
 
   const rpc = async p_slug => {
     const r = await fetch(`${SB_URL}/rest/v1/rpc/read_dismissal`, {
@@ -75,9 +85,10 @@ module.exports = async (req, res) => {
 
   try {
     if (!slug) {
-      const list = await rpc(null);
+      const all = await rpc(null);
+      const list = all.filter(t => !HIDDEN.has(t.slug)).map(named);
       for (const [key, def] of Object.entries(COMBINED)) {
-        const parts = list.filter(t => def.slugs.includes(t.slug));
+        const parts = all.filter(t => def.slugs.includes(t.slug));
         if (!parts.length) continue;
         list.push({ slug: key, teacher_name: def.teacher_name, combined: true,
           board_date: parts.map(t => t.board_date).sort().pop(), updated_at: parts.map(t => t.updated_at).sort().pop() });
@@ -89,7 +100,7 @@ module.exports = async (req, res) => {
       const b = merge(slug, COMBINED[slug], await Promise.all(COMBINED[slug].slugs.map(rpc)));
       return b ? send(200, b) : send(404, { error: 'not_found' });
     }
-    const b = await rpc(slug);
+    const b = named(await rpc(slug));
     return b ? send(200, b) : send(404, { error: 'not_found' });
   } catch (_) {
     return send(502, { error: 'upstream' });
