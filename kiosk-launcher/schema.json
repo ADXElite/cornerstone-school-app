@@ -13,7 +13,7 @@
     },
     "end": {
       "title": "Close board at (24-hour HH:MM, New York time)",
-      "description": "Default 15:15",
+      "description": "Default 15:30",
       "type": "string"
     },
     "weekdaysOnly": {

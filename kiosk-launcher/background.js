@@ -1,9 +1,9 @@
 // Cornerstone Dismissal Board Launcher
-// Every minute: inside the dismissal window (default 2:30–3:15 PM New York time, weekdays) make sure the
+// Every minute: inside the dismissal window (default 2:30–3:30 PM New York time, weekdays) make sure the
 // board is open full-screen; at the end of the window close it. If a teacher closes the board during
 // the window, it stays closed for the rest of that day.
 const KIOSK_URL = 'https://app.csjax.org/kiosk';
-const DEFAULTS = { board: '', start: '14:30', end: '15:15', weekdaysOnly: true };
+const DEFAULTS = { board: '', start: '14:30', end: '15:30', weekdaysOnly: true };
 
 chrome.runtime.onInstalled.addListener(setup);
 chrome.runtime.onStartup.addListener(setup);
@@ -73,4 +73,12 @@ chrome.windows.onRemoved.addListener(async id => {
   if (id !== winId) return;
   await chrome.storage.session.remove(['winId', 'closing']);
   if (!closing) await chrome.storage.local.set({ dismissedDate: nyNow().date });
+});
+
+// "Close board" button on the kiosk page (relayed by bridge.js). Counts as the teacher closing it for today.
+chrome.runtime.onMessage.addListener((msg, sender) => {
+  if (!msg || msg.type !== 'close-board' || !sender.tab) return;
+  chrome.storage.session.get('winId').then(({ winId }) =>
+    sender.tab.windowId === winId ? chrome.windows.remove(winId) : chrome.tabs.remove(sender.tab.id)   // only ever close our own window
+  ).catch(() => {});
 });
