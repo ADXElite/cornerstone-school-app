@@ -1,14 +1,14 @@
 importScripts('config.js');
 const C = self.DISMISSAL_CONFIG;
-const CATCH_UP_UNTIL = '17:00';      // if Chrome was closed at 2:30, still run when it opens before 5 PM
+const CATCH_UP_UNTIL = '17:00';      // if Chrome was closed at 2:20, still run when it opens before 5 PM
 const RECHECK_EVERY_MIN = 10;
 
 // ---------- schedule: a 1-minute heartbeat that decides whether a pull is due ----------
 chrome.runtime.onInstalled.addListener(async d => {
-  // v1.0.2 moved the daily pull from 2:15 to 2:30 PM; move a saved 2:15 setting along with it.
+  // v1.0.3 moved the daily pull to 2:20 PM; move a saved earlier default (2:15 or 2:30) along with it.
   if (d.reason === 'update') {
     const { settings } = await chrome.storage.local.get('settings');
-    if (settings && settings.time === '14:15') await chrome.storage.local.set({ settings: { ...settings, time: '14:30' } });
+    if (settings && (settings.time === '14:15' || settings.time === '14:30')) await chrome.storage.local.set({ settings: { ...settings, time: '14:20' } });
   }
   ensureAlarm();
 });
@@ -37,7 +37,7 @@ async function maybeRun() {
   if (s.weekdaysOnly && (now.weekday === 'Sat' || now.weekday === 'Sun')) return;
   if (now.hm < s.time) return;
   const { lastRun } = await chrome.storage.local.get('lastRun');
-  // A manual pull earlier in the day doesn't count — the 2:30 pull still happens.
+  // A manual pull earlier in the day doesn't count — the 2:20 pull still happens.
   const ranToday = lastRun && lastRun.date === now.date && lastRun.ok && (lastRun.hm || '') >= s.time;
   if (!ranToday) {
     // After a failure, retry every 5 minutes (e.g. once someone signs back in to KidAccount)
