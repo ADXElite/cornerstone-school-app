@@ -38,6 +38,7 @@ Pushing to `main` deploys automatically once the repo is connected in Vercel →
 
 ## Dismissal boards (classroom smartboards)
 - **Boards:** `https://app.csjax.org/dismissal/<teacher-name>` (e.g. `/dismissal/raja-backmon`); list of all boards at `/dismissal`.
+- **Combined boards:** `/dismissal/williams-newkirk` shows Jarrodd Williams' and Alexandria Newkirk's classes together (each student tagged with their teacher). Add more in the `COMBINED` list at the top of `api/dismissal.js`.
 - **Campus only:** `/api/dismissal` answers only requests from the IPs in the Vercel env var `DISMISSAL_ALLOWED_IPS` (currently `107.1.157.26`). Everyone else sees "Campus network only".
 - **Data:** table `public.dismissal_boards` (no public access). The Chrome extension writes through `ingest_dismissal(key, boards)`; the API reads through `read_dismissal(key, slug)` using `DISMISSAL_READ_KEY`. Both keys live in `private.config`.
 - **Source:** `chrome-extension/` — pulls every teacher page from KidAccount (teacherlist.php → teacherspage.php) at 2:20 PM on weekdays in the background of a signed-in Chrome, then uploads. Boards refresh themselves every minute and fit the screen.

@@ -40,6 +40,7 @@ main{padding:.8rem 1rem 1rem}
 .sub-h:first-of-type{border-top:0}
 ul{list-style:none;margin:0;padding:.2rem 0 .4rem}
 li{padding:.22rem .7rem;display:flex;justify-content:space-between;gap:.6rem;font-weight:600;font-size:1rem}
+li .who{flex:none;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);align-self:center;margin-left:auto}
 li .tag{flex:none;font-family:var(--display);font-weight:700;background:var(--chip);color:var(--chip-ink);border-radius:.3rem;padding:0 .35rem;font-size:.9rem;align-self:center}
 .absent{margin-top:.8rem;color:var(--muted);font-size:.8rem}
 .absent b{text-transform:uppercase;letter-spacing:.06em}
@@ -75,6 +76,8 @@ function kindOf(g){
   if (/walk/.test(s)) return 'walk';
   return 'other';
 }
+// On a combined board, show which homeroom each student is from.
+const who = s => s.teacher ? `<span class="who">${esc(s.teacher)}</span>` : '';
 function message(h, p){ main.innerHTML = `<div class="msg"><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`; }
 
 function renderBoard(b){
@@ -97,13 +100,13 @@ function renderBoard(b){
       for (const s of g.students){ (by[s.detail || '—'] ||= []).push(s); }
       const keys = Object.keys(by).sort((a,b)=>(parseFloat(a)||999)-(parseFloat(b)||999) || a.localeCompare(b));
       for (const n of keys){
-        html += `<div class="sub-h">Bus ${esc(n)}</div><ul>` + by[n].map(s=>`<li>${esc(s.name)}</li>`).join('') + '</ul>';
+        html += `<div class="sub-h">Bus ${esc(n)}</div><ul>` + by[n].map(s=>`<li><span>${esc(s.name)}</span>${who(s)}</li>`).join('') + '</ul>';
       }
     } else {
       // Show the sub-method (e.g. car number or program) only when it adds information
       html += '<ul>' + g.students.map(s => {
         const d = s.detail && !/^car rider$/i.test(s.detail) ? `<span class="tag">${esc(s.detail)}</span>` : '';
-        return `<li><span>${esc(s.name)}</span>${d}</li>`;
+        return `<li><span>${esc(s.name)}</span>${who(s)}${d}</li>`;
       }).join('') + '</ul>';
     }
     html += '</section>';
