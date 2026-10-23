@@ -1,0 +1,17 @@
+{
+  "name": "Cornerstone Dismissal",
+  "short_name": "Dismissal",
+  "description": "Classroom dismissal board kiosk for Cornerstone Christian School.",
+  "id": "/kiosk",
+  "start_url": "/kiosk",
+  "scope": "/kiosk",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#141213",
+  "theme_color": "#141213",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

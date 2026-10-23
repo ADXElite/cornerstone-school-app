@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#141213">
+<title>Dismissal Kiosk</title>
+<link rel="manifest" href="/kiosk.webmanifest">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Classroom Chromebook kiosk: teacher picks a homeroom once, then the board fills the screen. */
+:root{
+  --red:#E4010D; --ink:#141213; --bg:#F6F4F4; --surface:#FFFFFF; --muted:#6B6466; --line:#E4DFDF;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--body)}
+#board{position:fixed;inset:0;width:100%;height:100%;border:0;display:none;background:var(--bg)}
+body.showing #board{display:block}
+body.showing #picker{display:none}
+
+/* Picker */
+#picker{min-height:100%;display:flex;flex-direction:column}
+#picker header{background:var(--ink);color:#F6F4F4;border-bottom:4px solid var(--red);padding:14px 24px;display:flex;align-items:center;gap:20px}
+#picker header img{height:44px;width:auto;display:block}
+#picker header h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:34px;margin:0;line-height:1}
+#picker header p{margin:2px 0 0;font-size:15px;opacity:.8;letter-spacing:.05em;text-transform:uppercase}
+#picker main{flex:1;padding:24px;max-width:1100px;width:100%;margin:0 auto}
+.search{width:100%;font:600 22px var(--body);padding:14px 18px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin-bottom:18px}
+.search:focus{outline:none;border-color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.grid button{font:700 24px var(--display);text-transform:uppercase;letter-spacing:.03em;text-align:left;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:18px 18px;cursor:pointer;min-height:76px}
+.grid button:hover,.grid button:focus-visible{border-color:var(--red);outline:none}
+.grid button.current{border-color:var(--red);background:#FBE9EA}
+.grid button small{display:block;font:400 14px var(--body);text-transform:none;letter-spacing:0;color:var(--muted);margin-top:4px}
+.msg{text-align:center;margin:60px auto;max-width:620px}
+.msg h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:34px;margin:0 0 8px}
+.msg p{margin:0;color:var(--muted);font-size:18px}
+.actions{display:flex;justify-content:flex-end;margin-top:20px}
+.actions button{font:700 18px var(--display);text-transform:uppercase;letter-spacing:.05em;background:transparent;border:2px solid var(--line);border-radius:8px;padding:10px 16px;cursor:pointer;color:var(--muted)}
+
+/* "Change class" button over the board: faint until touched */
+#change{position:fixed;right:14px;bottom:14px;z-index:5;display:none;font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;background:rgba(20,18,19,.78);color:#fff;border:0;border-radius:999px;padding:10px 16px;cursor:pointer;opacity:.25;transition:opacity .2s}
+#change:hover,#change:focus-visible,body.woke #change{opacity:1}
+body.showing #change{display:block}
+</style>
+</head>
+<body>
+<section id="picker">
+  <header>
+    <img src="/icons/logo-horizontal.webp" alt="Cornerstone Christian School">
+    <div><h1>Choose your class</h1><p>This screen will show that homeroom's dismissal board</p></div>
+  </header>
+  <main id="pmain"><div class="msg"><h2>Loading…</h2></div></main>
+</section>
+<iframe id="board" title="Dismissal board"></iframe>
+<button id="change" type="button">Change class</button>
+<script>
+const KEY = 'ccs-kiosk-board';
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clean = s => String(s || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+const store = {
+  get(){ try { return localStorage.getItem(KEY) || ''; } catch (_) { return ''; } },
+  set(v){ try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch (_) {} }
+};
+const pmain = document.getElementById('pmain');
+const board = document.getElementById('board');
+let boards = [];
+
+// A board can be preset per device with ?board=<slug> (e.g. from Google Admin); otherwise the saved choice is used.
+const preset = clean(new URLSearchParams(location.search).get('board'));
+if (preset) store.set(preset);
+
+function show(slug){
+  store.set(slug);
+  board.src = '/dismissal/' + encodeURIComponent(slug);
+  document.body.classList.add('showing');
+}
+function pickerMsg(h, p){ pmain.innerHTML = `<div class="msg"><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`; }
+
+async function openPicker(){
+  document.body.classList.remove('showing');
+  board.removeAttribute('src');
+  pickerMsg('Loading…', '');
+  try {
+    const r = await fetch('/api/dismissal', {cache:'no-store'});
+    if (r.status === 403) return pickerMsg('Campus network only', 'Dismissal boards can only be viewed on the Cornerstone network.');
+    if (!r.ok) { setTimeout(openPicker, 30000); return pickerMsg('Unable to load classes', 'Trying again in 30 seconds.'); }
+    boards = (await r.json()).slice().sort((a, b) => a.teacher_name.localeCompare(b.teacher_name));
+  } catch (_) {
+    setTimeout(openPicker, 30000);
+    return pickerMsg('No connection', 'Trying again in 30 seconds.');
+  }
+  if (!boards.length) return pickerMsg('No classes yet', 'Classes appear after the first pull from KidAccount.');
+  const cur = store.get();
+  pmain.innerHTML =
+    `<input class="search" id="q" type="search" placeholder="Type a teacher's name…" autocomplete="off">` +
+    `<div class="grid" id="grid"></div>` +
+    (cur ? `<div class="actions"><button type="button" id="back">Back to ${esc((boards.find(b => b.slug === cur) || {}).teacher_name || 'board')}</button></div>` : '');
+  const grid = document.getElementById('grid');
+  const draw = q => {
+    const list = boards.filter(b => b.teacher_name.toLowerCase().includes(q.toLowerCase()));
+    grid.innerHTML = list.length
+      ? list.map(b => `<button type="button" data-slug="${esc(b.slug)}" class="${b.slug === cur ? 'current' : ''}">${esc(b.teacher_name)}<small>/dismissal/${esc(b.slug)}</small></button>`).join('')
+      : '<p style="color:var(--muted)">No matching teacher.</p>';
+  };
+  draw('');
+  document.getElementById('q').addEventListener('input', e => draw(e.target.value));
+  grid.addEventListener('click', e => { const b = e.target.closest('button[data-slug]'); if (b) show(b.dataset.slug); });
+  const back = document.getElementById('back');
+  if (back) back.addEventListener('click', () => show(cur));
+}
+
+document.getElementById('change').addEventListener('click', openPicker);
+// Make the button easy to find after any touch, then let it fade again.
+let wakeT;
+const wake = () => { document.body.classList.add('woke'); clearTimeout(wakeT); wakeT = setTimeout(() => document.body.classList.remove('woke'), 5000); };
+['pointerdown', 'keydown'].forEach(ev => window.addEventListener(ev, wake));
+board.addEventListener('load', () => {
+  try { ['pointerdown', 'keydown'].forEach(ev => board.contentWindow.addEventListener(ev, wake)); } catch (_) {}
+});
+
+const saved = store.get();
+saved ? show(saved) : openPicker();
+// Reload overnight so the kiosk picks up app updates (the board itself refreshes every minute).
+setTimeout(() => location.reload(), 6 * 3600 * 1000);
+</script>
+</body>
+</html>
