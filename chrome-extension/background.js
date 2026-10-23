@@ -1,7 +1,7 @@
 importScripts('config.js');
 const C = self.DISMISSAL_CONFIG;
 const CATCH_UP_UNTIL = '17:00';      // if Chrome was closed at 2:20, still run when it opens before 5 PM
-const RECHECK_EVERY_MIN = 10;
+const RECHECK_EVERY_MIN = 1;        // "Re-sync every minute" checkbox
 
 // ---------- schedule: a 1-minute heartbeat that decides whether a pull is due ----------
 chrome.runtime.onInstalled.addListener(async d => {
