@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Cornerstone Dismissal Board Launcher",
+  "version": "1.0.0",
+  "description": "Opens the classroom dismissal board full-screen from 2:30 to 3:15 PM on school days, then closes it.",
+  "permissions": ["alarms", "storage"],
+  "background": { "service_worker": "background.js" },
+  "storage": { "managed_schema": "schema.json" },
+  "icons": { "128": "icon128.png" }
+}

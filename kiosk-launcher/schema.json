@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "board": {
+      "title": "Teacher board slug (optional)",
+      "description": "e.g. raja-backmon. Leave blank to let the teacher pick their class on the screen.",
+      "type": "string"
+    },
+    "start": {
+      "title": "Show board at (24-hour HH:MM, New York time)",
+      "description": "Default 14:30",
+      "type": "string"
+    },
+    "end": {
+      "title": "Close board at (24-hour HH:MM, New York time)",
+      "description": "Default 15:15",
+      "type": "string"
+    },
+    "weekdaysOnly": {
+      "title": "Weekdays only",
+      "description": "Default true",
+      "type": "boolean"
+    }
+  }
+}
