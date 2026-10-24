@@ -25,6 +25,12 @@ The daily job is a Supabase `pg_cron` task (`csjax-daily-sync`) that calls the `
 - `supabase/functions/sync-website` — website + calendar sync
 - `supabase/functions/send-push` — sends Web Push to every subscribed device
 
+## Landscape and iPhone Duo
+- The installed app can rotate (`orientation: any` in the manifest).
+- On touch screens held sideways (iPhone Duo open or closed, iPhones in landscape, iPad mini), the bottom tab bar becomes a side rail on the left, the header shrinks, and each screen splits into two columns (e.g. Field Trips: grade picker left, trips right). Event details open as a centered card.
+- When iPhone Duo is partially folded like a book, Safari's Viewport Segments support (preview in Safari 27.1, behind a feature flag) lines the two columns up with the two halves so nothing sits on the fold. Without it, the normal landscape layout is used.
+- Portrait phones and desktop browsers are unchanged.
+
 ## Push notifications
 - iPhone/iPad: works on iOS 16.4+ after the app is added to the Home Screen and opened from there.
 - Android/desktop Chrome, Edge, Firefox: works in the browser or installed app.

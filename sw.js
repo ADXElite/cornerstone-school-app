@@ -1,5 +1,5 @@
 // Cornerstone School app service worker: offline app shell + push notifications.
-const CACHE = 'ccs-v2';
+const CACHE = 'ccs-v3';
 const SHELL = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png', '/icons/logo-horizontal.webp', '/icons/badge-96.png'];
 
 self.addEventListener('install', e => {
