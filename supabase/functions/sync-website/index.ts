@@ -234,7 +234,9 @@ async function syncAnnouncements(debug: boolean) {
       title = parts[0] || text.slice(0, 80);
     }
     if (body.startsWith(title)) body = body.slice(title.length).trim();
-    body = body.replace(/\bLink:\s*\S+/gi, "").replace(/\bhttps?:\/\/\S+/gi, "").replace(/\s+/g, " ").trim();
+    // Keep the app's own address readable as plain text (it's not a link in the app); strip other raw URLs.
+    body = body.replace(/\b(?:https?:\/\/)?(?:www\.)?app\.csjax\.org\/?/gi, "app.csjax.org")
+      .replace(/\bLink:\s*\S+/gi, "").replace(/\bhttps?:\/\/\S+/gi, "").replace(/\s+/g, " ").trim();
     items.push({ title: title.slice(0, 160), body: body.slice(0, 800), link });
   }
   if (debug) return { count: items.length, items, regionSample: region.slice(0, 3000) };
