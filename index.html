@@ -562,6 +562,10 @@ let TRIPS=[
   ['6th Grade thru 12th Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
   ['6th Grade thru 12th Grade','2027-04-15','Grad Bash (12th Grade Only)','https://csjax.jotform.com/262595541536969']
  ].map(([g,d,t,u])=>({g,d,t,u}));
+// Sign-ups the app adds under every grade level (kept even when field trips sync from csjax.org)
+const EXTRA_TRIPS=[
+  {t:'Dress Down Days',u:'https://csjax.jotform.com/262996069477074',signup:true}
+];
 let DOCS=[];
 let ALERTS=[];
 
@@ -604,9 +608,9 @@ function renderTrips(){
   const full=g=>g.replace(/\s*(thru|through)\s*/i,' – ');
   $('#trip-chips').innerHTML=groups.map(g=>`<button data-grade="${esc(g)}" aria-pressed="${g===GRADE}" aria-label="${esc(g)}"><b>${esc(short(g))}</b><small>${esc(full(g))}</small></button>`).join('');
   const t=localISO();
-  const list=TRIPS.filter(x=>x.g===GRADE).sort((a,b)=>(a.d||'').localeCompare(b.d||''));
+  const list=[...EXTRA_TRIPS.filter(e=>!TRIPS.some(x=>x.g===GRADE&&x.u===e.u)).map(e=>({...e,g:GRADE})),...TRIPS.filter(x=>x.g===GRADE)].sort((a,b)=>(a.d||'').localeCompare(b.d||''));
   const rows=list.map(x=>{const d=x.d?dt(x.d):null;const past=x.d&&x.d<t;
-    return `<div class="row${past?' past':''}">${d?`<div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div>`:''}<div class="txt"><b>${esc(x.t)}</b><p>${d?d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):''}${past?' · Trip date has passed':''}</p><a class="slip" href="${esc(x.u)}" target="_blank" rel="noopener">Click to Complete Permission Slip</a></div></div>`}).join('');
+    return `<div class="row${past?' past':''}">${d?`<div class="cal"><i>${d.toLocaleDateString('en-US',{month:'short'})}</i><b>${d.getDate()}</b></div>`:''}<div class="txt"><b>${esc(x.t)}</b><p>${d?d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):''}${past?' · Trip date has passed':''}</p><a class="slip" href="${esc(x.u)}" target="_blank" rel="noopener">${x.signup?'Click to Sign Up':'Click to Complete Permission Slip'}</a></div></div>`}).join('');
   $('#trip-list').innerHTML=(GRADE?`<div class="monthhead">${esc(GRADE)}</div>`:'')+(rows||'<p class="empty">No field trips posted for this grade level yet.</p>');
 }
 function renderLinks(){
