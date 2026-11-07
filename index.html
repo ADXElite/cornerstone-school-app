@@ -554,11 +554,9 @@ const HIDE_DOCS=[/student\s*id\s*number/i,/261055782295059/,/bus\s*route/i];
 let NEWS=[{t:'Dismissal Updates',d:'Cornerstone School has partnered with KidAccount to assist with Afternoon Student Dismissal.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
 let EVENTS=[];
 let TRIPS=[
-  ['Kindergarten thru 2nd Grade','2026-11-06','Color Me Mine','https://csjax.jotform.com/262584264079971'],
   ['Kindergarten thru 2nd Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
   ['3rd Grade thru 5th Grade','2026-11-18','Color Me Mine','https://csjax.jotform.com/262584979957989'],
   ['3rd Grade thru 5th Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
-  ['6th Grade thru 12th Grade','2026-11-06',"Conner's Amazing Acers",'https://csjax.jotform.com/262597516821970'],
   ['6th Grade thru 12th Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
   ['6th Grade thru 12th Grade','2027-04-15','Grad Bash (12th Grade Only)','https://csjax.jotform.com/262595541536969']
  ].map(([g,d,t,u])=>({g,d,t,u}));
@@ -567,6 +565,9 @@ const EXTRA_TRIPS=[
   {d:'2026-11-12',t:'Dress Down Days',u:'https://csjax.jotform.com/262996069477074',signup:true},
   {d:'2026-11-19',t:'Dress Down Days',u:'https://csjax.jotform.com/262996069477074',signup:true}
 ];
+// Field trips the app should never show (removed 11/06 trips: Color Me Mine K-2, Conner's Amazing Acers 6-12)
+const HIDE_TRIPS=['262584264079971','262597516821970'];
+const showTrip=x=>!HIDE_TRIPS.some(id=>String(x.u||'').includes(id));
 let DOCS=[];
 let ALERTS=[];
 
@@ -682,7 +683,7 @@ async function loadLive(){
     ]);
     NEWS=ann.map(a=>({t:a.title,d:a.body,u:a.link,pin:a.pinned}));
     EVENTS=ev.map(e=>({d:e.event_date,t:e.title,tm:e.time_label,loc:e.location,s:e.starts_at,en:e.ends_at,ad:e.all_day,desc:(e.description&&norm(e.description)!==norm(e.title))?e.description:null}));
-    TRIPS=ft.map(x=>({g:x.grade_group,d:x.trip_date,t:x.title,u:x.url}));
+    TRIPS=ft.map(x=>({g:x.grade_group,d:x.trip_date,t:x.title,u:x.url})).filter(showTrip);
     DOCS=docs.map(d=>({c:d.category,t:d.title,u:d.url}));
     ALERTS=notes.map(n=>({t:n.title,b:n.body,u:n.url,at:n.created_at}));
     if(runs[0])$('#synced').textContent='Updated from csjax.org '+new Date(runs[0].synced_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
@@ -690,7 +691,7 @@ async function loadLive(){
     store.set('ccs-cache2',JSON.stringify({NEWS,EVENTS,TRIPS,DOCS,ALERTS}));
   }catch(e){}
 }
-try{const c=JSON.parse(store.get('ccs-cache2')||'null');if(c){({NEWS,EVENTS,TRIPS,DOCS,ALERTS}=c)}}catch(_){}
+try{const c=JSON.parse(store.get('ccs-cache2')||'null');if(c){({NEWS,EVENTS,TRIPS,DOCS,ALERTS}=c);TRIPS=TRIPS.filter(showTrip)}}catch(_){}
 
 /* Event details */
 function linkify(t){
