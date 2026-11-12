@@ -384,7 +384,7 @@ button.row:active{background:var(--bg)}
           <dt>No early check-outs</dt><dd>2:00 PM to 3:00 PM</dd>
         </dl>
         <h3>Dismissal changes</h3>
-        <p>All afternoon dismissal changes go through the <b>KidAccount</b> app, one-time or recurring (for example, car rider to bus rider). Same-day changes must be in by 1:00 PM.</p>
+        <p>All afternoon dismissal changes go through the <b>Absence &amp; Dismissal Portal</b> at portal.csjax.org, one-time or recurring (for example, car rider to bus rider). Log in with the phone number or email address on file with the school office. Same-day changes must be in by 1:00 PM.</p>
         <h3>Late sign-in</h3>
         <p>Students arriving after 8:30 AM sign in at the iPad kiosk in the Front Office with their Student ID badge.</p>
         <h3>Early check-out</h3>
@@ -394,8 +394,7 @@ button.row:active{background:var(--bg)}
         <h3>Bus riders</h3>
         <p>Drivers scan each student's ID badge at boarding. Students need their badge ready every afternoon.</p>
         <div class="btns">
-          <a class="btn" href="https://kidaccount.net/connect" target="_blank" rel="noopener">Open KidAccount</a>
-          <a class="btn" href="https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf" target="_blank" rel="noopener">KidAccount Setup Guide</a>
+          <a class="btn" href="https://portal.csjax.org/" target="_blank" rel="noopener">Open The Portal</a>
           <a class="btn" href="https://csjax.jotform.com/262516462811051" target="_blank" rel="noopener">Replace Badge Or Sign</a>
         </div>
       </div>
@@ -404,7 +403,7 @@ button.row:active{background:var(--bg)}
     <details>
       <summary><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M9 14h6"/></svg></span>Absences</summary>
       <div class="body">
-        <p>Parents must notify the school office whenever a child will be absent. Use the Absence &amp; Dismissal Portal, or report it through KidAccount.</p>
+        <p>Parents must notify the school office whenever a child will be absent. Report it in the Absence &amp; Dismissal Portal at portal.csjax.org.</p>
         <a class="btn" href="https://portal.csjax.org/" target="_blank" rel="noopener">Report An Absence</a>
       </div>
     </details>
@@ -445,7 +444,7 @@ button.row:active{background:var(--bg)}
 <!-- BUS INFO -->
 <section class="screen" data-screen="bus" hidden>
   <div class="lead">
-  <div><h1>Bus Info</h1><p class="muted">Bus Route Sign-Up · 2026–2027 school year</p></div>
+  <div><h1>Bus Info</h1><p class="muted">Bus routes · 2026–2027 school year</p></div>
   <div class="btns">
     <a class="btn" href="https://www.google.com/maps/d/u/0/edit?mid=1XLBUiszr7mlAGVP4fuRFYUfpZOVo4QQx&amp;usp=sharing" target="_blank" rel="noopener">Bus Stop Map</a>
     <a class="btn" href="https://www.csjax.org/editoruploads/files/01%20-%20School%20Bus%20Routes%20(2026-2027).pdf" target="_blank" rel="noopener">Bus Route Schedule</a>
@@ -455,16 +454,9 @@ button.row:active{background:var(--bg)}
   </div>
   <div class="rest">
   <div class="card">
-    <b class="t">Registration is required</b>
-    <p>Any student who will use the Cornerstone School Bus System must be registered in advance, so we can make sure there's enough seating on each bus. All new and returning riders must register every school year, so please register your student as soon as possible to secure a spot.</p>
-    <p>Your student must already be enrolled at Cornerstone before completing the bus sign-up form.</p>
-  </div>
-  <div class="card">
-    <b class="t">Please note</b>
-    <ol>
-      <li>A sign-up is a request and does not guarantee a spot. Bus transportation is a privilege offered on a first come, first served basis.</li>
-      <li>If you're requesting a bus stop for more than one student, submit a separate form for each student.</li>
-    </ol>
+    <b class="t">Registration is closed</b>
+    <p>Bus registration for the 2026–2027 school year is now closed. To make changes to your student's bus route, please contact the school office at <a href="tel:+19047305500" style="white-space:nowrap">(904) 730-5500</a>.</p>
+    <p>Any student who rides a Cornerstone school bus must be registered in advance, so there's enough seating on each bus. All new and returning riders must register every school year.</p>
   </div>
   </div>
 </section>
@@ -529,15 +521,13 @@ const ic=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 const QUICK=[
   {t:'Update My Information',s:'Keep your family\'s contact details current',u:'https://csjax.jotform.com/262874930975069',i:'user',wide:true},
   {t:'Report an absence',s:'Absence & Dismissal Portal',u:'https://portal.csjax.org/',i:'check'},
-  {t:'Change dismissal',s:'KidAccount, by 1:00 PM',u:'https://kidaccount.net/connect',i:'swap'},
+  {t:'Change dismissal',s:'Portal, by 1:00 PM',u:'https://portal.csjax.org/',i:'swap'},
   {t:'FACTS',s:'Grades & progress reports',u:'https://cs-fl.client.renweb.com/pwr/',i:'grad'},
   {t:'Meal Menus',s:'',u:'https://www.schoolnutritionandfitness.com/?sid=1786582954026',i:'food'}
 ];
 const LINKS_TOP=['Everyday',[
   ['FACTS','Grades & progress reports · District code CS-FL','https://cs-fl.client.renweb.com/pwr/'],
-  ['Absence & Dismissal Portal','portal.csjax.org','https://portal.csjax.org/'],
-  ['KidAccount','Dismissal changes & absences','https://kidaccount.net/connect'],
-  ['KidAccount Instructions','How to set up the app','https://www.csjax.org/editoruploads/files/2026-2027-Connect-App-Parent-Instructions.pdf'],
+  ['Absence & Dismissal Portal','Dismissal changes & absences · portal.csjax.org','https://portal.csjax.org/'],
   ['Clever Login','Student learning apps','https://clever.com/in/csjax'],
   ['Ignitia Login','Online coursework','https://cornerstonefl.ignitiaschools.com/owsoo/login/auth'],
   ['Meal Menus','School Nutrition & Fitness','https://www.schoolnutritionandfitness.com/?sid=1786582954026']]];
@@ -551,7 +541,7 @@ const LINKS_BOTTOM=[
 const HIDE_DOCS=[/student\s*id\s*number/i,/261055782295059/,/bus\s*route/i];
 
 /* Built-in copy (used until live data loads, and offline) */
-let NEWS=[{t:'Dismissal Updates',d:'Cornerstone School has partnered with KidAccount to assist with Afternoon Student Dismissal.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
+let NEWS=[{t:'Dismissal Updates',d:'Submit dismissal changes and report absences at portal.csjax.org.',u:'https://www.csjax.org/school-info/dismissal.cfm'}];
 let EVENTS=[];
 let TRIPS=[
   ['Kindergarten thru 2nd Grade','2026-12-17','The Nutcracker Ballet','https://csjax.jotform.com/262576336118966'],
